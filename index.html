@@ -1400,6 +1400,7 @@ function renderWorkTable(tp, tc, filterType='all') {
       <td style="padding:11px 14px">${typeCell}</td>
       <td style="padding:11px 14px">${urlCell}</td>
       <td style="padding:11px 14px;font-family:var(--font-mono);font-size:11px;color:${isComment?'var(--yellow)':'var(--green)'};font-weight:700">+${item.amount.toLocaleString()}</td>
+      <td style="padding:11px 14px"><button onclick="deleteItem('${item._type}','${item.id}')" style="background:none;border:1px solid rgba(244,114,182,0.3);color:var(--pink);cursor:pointer;border-radius:5px;padding:2px 7px;font-size:11px;" onmouseover="this.style.background='rgba(244,114,182,0.1)'" onmouseout="this.style.background='none'">✕</button></td>
     </tr>`;
   }).join('');
 }
@@ -1474,6 +1475,7 @@ function renderRecords() {
       <td style="padding:11px 14px"><span class="tbadge" style="${isComment?'background:rgba(251,191,36,0.1);color:var(--yellow)':''}">${isComment?'💬 댓글':'📄 '+(item.category||'게시물')}</span></td>
       <td style="padding:11px 14px">${urlCell}</td>
       <td style="padding:11px 14px;font-family:var(--font-mono);font-size:11px;color:${isComment?'var(--yellow)':'var(--green)'};font-weight:700;white-space:nowrap">+${item.amount.toLocaleString()}원</td>
+      <td style="padding:11px 14px"><button onclick="deleteItem('${item._type}','${item.id}')" style="background:none;border:1px solid rgba(244,114,182,0.3);color:var(--pink);cursor:pointer;border-radius:5px;padding:2px 7px;font-size:11px;" onmouseover="this.style.background='rgba(244,114,182,0.1)'" onmouseout="this.style.background='none'">✕</button></td>
     </tr>`;
   }).join('');
 
@@ -1600,6 +1602,17 @@ function populateSelects() {
 }
 
 /* ===================== 작업 저장 ===================== */
+/* ===================== 삭제 ===================== */
+async function deleteItem(type, id) {
+  if (!confirm("이 항목을 삭제할까요?")) return;
+  if (type === "post") {
+    await sb.from("posts").delete().eq("id", id);
+  } else {
+    await sb.from("comments").delete().eq("id", id);
+  }
+  await loadAll();
+}
+
 async function saveWork() {
   const accountId  = document.getElementById('mAccount').value;
   const cafeId     = document.getElementById('mCafe').value;
