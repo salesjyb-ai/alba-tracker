@@ -1096,10 +1096,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
       <div class="settings-card">
         <div class="settings-title">💰 단가 설정</div>
-        <div class="setting-row"><span class="setting-key">게시물 단가</span><input class="setting-input fmt-number" type="text" id="pricePost" value="200" inputmode="numeric" style="color:var(--green)"> <span style="font-size:10px;color:var(--text3)">원/개</span></div>
-        <div class="setting-row"><span class="setting-key">댓글 단가</span><input class="setting-input fmt-number" type="text" id="priceComment" value="20" inputmode="numeric" style="color:var(--yellow)"> <span style="font-size:10px;color:var(--text3)">원/개</span></div>
-        <div class="setting-row"><span class="setting-key">일 목표</span><input class="setting-input fmt-number" type="text" id="settingDayGoal" value="30,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">원</span></div>
-        <div class="setting-row"><span class="setting-key">월 목표</span><input class="setting-input fmt-number" type="text" id="settingMonthGoal" value="300,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">원</span></div>
+        <div class="setting-row"><span class="setting-key">게시물 단가</span><input class="setting-input fmt-number" type="text" id="pricePost" value="200" inputmode="numeric" style="color:var(--green)"> <span style="font-size:10px;color:var(--text3)">원/개</span><button class="goal-set-btn" style="margin-left:6px" onclick="saveGoal('price_post','pricePost')">저장</button></div>
+        <div class="setting-row"><span class="setting-key">댓글 단가</span><input class="setting-input fmt-number" type="text" id="priceComment" value="20" inputmode="numeric" style="color:var(--yellow)"> <span style="font-size:10px;color:var(--text3)">원/개</span><button class="goal-set-btn" style="margin-left:6px" onclick="saveGoal('price_comment','priceComment')">저장</button></div>
+        <div class="setting-row"><span class="setting-key">일 목표</span><input class="setting-input fmt-number" type="text" id="settingDayGoal" value="30,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">원</span><button class="goal-set-btn" style="margin-left:6px" onclick="saveGoal('daily','settingDayGoal')">저장</button></div>
+        <div class="setting-row"><span class="setting-key">월 목표</span><input class="setting-input fmt-number" type="text" id="settingMonthGoal" value="300,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">원</span><button class="goal-set-btn" style="margin-left:6px" onclick="saveGoal('monthly','settingMonthGoal')">저장</button></div>
       </div>
 
       <!-- Reset info card -->
@@ -1554,6 +1554,26 @@ function renderGoals() {
   const dailyGoal   = (gGoals.find(g=>g.type==='daily')?.amount)   || 30000;
   const weeklyGoal  = (gGoals.find(g=>g.type==='weekly')?.amount)  || 100000;
   const monthlyGoal = (gGoals.find(g=>g.type==='monthly')?.amount) || 300000;
+  const pricePost   = (gGoals.find(g=>g.type==='price_post')?.amount)    || 200;
+  const priceComment= (gGoals.find(g=>g.type==='price_comment')?.amount) || 20;
+
+  // 입력창에 저장된 값 반영
+  const dayEl   = document.getElementById('goalDayInput');
+  const weekEl  = document.getElementById('goalWeekInput');
+  const monthEl = document.getElementById('goalMonthInput');
+  const postEl  = document.getElementById('pricePost');
+  const cmtEl   = document.getElementById('priceComment');
+  if (dayEl)   dayEl.value   = dailyGoal.toLocaleString('ko-KR');
+  if (weekEl)  weekEl.value  = weeklyGoal.toLocaleString('ko-KR');
+  if (monthEl) monthEl.value = monthlyGoal.toLocaleString('ko-KR');
+  if (postEl)  postEl.value  = pricePost.toLocaleString('ko-KR');
+  if (cmtEl)   cmtEl.value   = priceComment.toLocaleString('ko-KR');
+
+  // 설정 페이지 목표 입력창도 동기화
+  const sDay   = document.getElementById('settingDayGoal');
+  const sMonth = document.getElementById('settingMonthGoal');
+  if (sDay)   sDay.value   = dailyGoal.toLocaleString('ko-KR');
+  if (sMonth) sMonth.value = monthlyGoal.toLocaleString('ko-KR');
 
   const sets = [
     {id:'goal-day',  earn:todayEarn,  goal:dailyGoal,   label:'일 목표'},
@@ -1952,6 +1972,9 @@ async function saveGoal(type, inputId) {
   } else {
     await sb.from('goals').insert({type, amount});
   }
+  // 저장 완료 피드백
+  const btn = document.querySelector(`button[onclick="saveGoal('${type}','${inputId}')"]`);
+  if (btn) { const orig = btn.textContent; btn.textContent = '✓ 저장됨'; btn.style.color='var(--green)'; setTimeout(()=>{btn.textContent=orig;btn.style.color='';},1500); }
   await loadAll();
 }
 
