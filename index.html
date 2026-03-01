@@ -2241,17 +2241,16 @@ async function saveAllSettings() {
 
   try {
     if (page === 'settings') {
-      // 설정 페이지: 전체 저장
-      await Promise.all([
-        saveBranding(),
-        savePriceSettings(),
-        saveNavNames(),
-        saveTypography(),
-        saveCafeSettings(),
-      ]);
-      await loadAll();
+      // 순차 실행 — 카페 저장 완료 후 loadAll
+      await saveBranding();
+      await saveNavNames();
+      await saveTypography();
+      await savePriceSettings();
+      await saveCafeSettings(); // 마지막에 카페 저장
+      await loadAll();          // 모두 완료 후 화면 갱신
     } else if (page === 'goals') {
       await savePriceSettings();
+      await loadAll();
     } else {
       // 대시보드/기록/달력/차트: 브랜딩·메뉴 이름만
       await Promise.all([saveBranding(), saveNavNames()]);
@@ -2306,7 +2305,7 @@ async function savePriceSettings() {
     sb.from('goals').upsert({type:'weekly',        amount:weekGoal},     {onConflict:'type'}),
     sb.from('goals').upsert({type:'monthly',       amount:monthGoal},    {onConflict:'type'}),
   ]);
-  await loadAll();
+  // loadAll은 saveAllSettings에서 한번만 호출
 }
 
 async function saveNavNames() {
