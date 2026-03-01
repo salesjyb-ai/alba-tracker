@@ -1334,9 +1334,13 @@ function renderDashboard() {
   const todayPostsEl    = document.getElementById('statTodayPosts');
   const todayCommentsEl = document.getElementById('statTodayComments');
   const todayEarnEl     = document.getElementById('statTodayEarn');
+  const statAccountsEl  = document.getElementById('statAccounts');
+  const statCafesEl     = document.getElementById('statCafes');
   if (todayPostsEl)    todayPostsEl.textContent    = tp.length + '개';
   if (todayCommentsEl) todayCommentsEl.textContent = todayCommentCount + '개';
   if (todayEarnEl)     todayEarnEl.textContent     = todayEarn.toLocaleString('ko-KR') + '원';
+  if (statAccountsEl)  statAccountsEl.textContent  = gAccounts.length + '개';
+  if (statCafesEl)     statCafesEl.textContent     = gCafes.length + '개';
 
   // 목표 프로그레스바
   const dailyPct   = Math.min(Math.round(todayEarn / dailyGoal * 100), 100);
