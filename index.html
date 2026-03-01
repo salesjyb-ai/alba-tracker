@@ -1297,7 +1297,19 @@ async function loadAll() {
 }
 
 /* ===================== 오늘 필터 ===================== */
-function getTodayStr() { return new Date().toISOString().split('T')[0]; }
+/* KST 기준 오늘 날짜 문자열 (YYYY-MM-DD) */
+function getKSTDateStr(date = new Date()) {
+  const kst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  return kst.toISOString().split('T')[0];
+}
+
+/* KST 기준 현재 시각 ISO 문자열 */
+function getKSTISOStr(date = new Date()) {
+  const kst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  return kst.toISOString().replace('Z', '+09:00');
+}
+
+function getTodayStr() { return getKSTDateStr(); }
 
 function todayPosts()    { return gPosts.filter(p => p.worked_at.startsWith(getTodayStr())); }
 function todayComments() { return gComments.filter(c => c.worked_at.startsWith(getTodayStr())); }
@@ -1310,13 +1322,16 @@ function renderDashboard() {
   const todayCommentCount = tc.reduce((s,c)=>s+c.count,0);
 
   // 주간/월간 수익
-  const now = new Date();
-  const weekStart = new Date(now); weekStart.setDate(now.getDate() - now.getDay()); weekStart.setHours(0,0,0,0);
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const weekEarn = gPosts.filter(p=>new Date(p.worked_at)>=weekStart).reduce((s,p)=>s+p.amount,0)
-                 + gComments.filter(c=>new Date(c.worked_at)>=weekStart).reduce((s,c)=>s+c.amount,0);
-  const monthEarn = gPosts.filter(p=>new Date(p.worked_at)>=monthStart).reduce((s,p)=>s+p.amount,0)
-                  + gComments.filter(c=>new Date(c.worked_at)>=monthStart).reduce((s,c)=>s+c.amount,0);
+  // KST 기준 주간/월간 시작점
+  const nowKST = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
+  const todayKSTStr = getKSTDateStr();
+  const weekStartStr = getKSTDateStr(new Date(new Date().getTime() + 9*60*60*1000 - nowKST.getDay()*86400000));
+  const monthStartStr = todayKSTStr.slice(0,7) + '-01';
+
+  const weekEarn = gPosts.filter(p=>p.worked_at.slice(0,10)>=weekStartStr).reduce((s,p)=>s+p.amount,0)
+                 + gComments.filter(c=>c.worked_at.slice(0,10)>=weekStartStr).reduce((s,c)=>s+c.amount,0);
+  const monthEarn = gPosts.filter(p=>p.worked_at.slice(0,10)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
+                  + gComments.filter(c=>c.worked_at.slice(0,10)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
 
   const dailyGoal   = (gGoals.find(g=>g.type==='daily')?.amount)   || 30000;
   const weeklyGoal  = (gGoals.find(g=>g.type==='weekly')?.amount)  || 100000;
@@ -1493,18 +1508,16 @@ function renderCalendar() { buildCalForMonth(calYear, calMonth2); }
 
 /* ===================== 통계 차트 렌더 ===================== */
 function renderCharts() {
-  // 계정별 이번 달 수익
-  const now = new Date();
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const monthStartStr = getKSTDateStr().slice(0,7) + '-01';
   const accChartEl = document.getElementById('accBarChart');
   if (accChartEl) {
     const maxEarn = Math.max(...gAccounts.map(acc => {
-      return gPosts.filter(p=>p.account_id===acc.id&&new Date(p.worked_at)>=monthStart).reduce((s,p)=>s+p.amount,0)
-           + gComments.filter(c=>c.account_id===acc.id&&new Date(c.worked_at)>=monthStart).reduce((s,c)=>s+c.amount,0);
+      return gPosts.filter(p=>p.account_id===acc.id&&p.worked_at.slice(0,10)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
+           + gComments.filter(c=>c.account_id===acc.id&&c.worked_at.slice(0,10)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
     }), 1);
     accChartEl.innerHTML = gAccounts.map(acc => {
-      const earn = gPosts.filter(p=>p.account_id===acc.id&&new Date(p.worked_at)>=monthStart).reduce((s,p)=>s+p.amount,0)
-                 + gComments.filter(c=>c.account_id===acc.id&&new Date(c.worked_at)>=monthStart).reduce((s,c)=>s+c.amount,0);
+      const earn = gPosts.filter(p=>p.account_id===acc.id&&p.worked_at.slice(0,10)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
+                 + gComments.filter(c=>c.account_id===acc.id&&c.worked_at.slice(0,10)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
       const pct = Math.round(earn/maxEarn*100);
       return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
         <div class="bar-lbl" style="color:${acc.color}">${acc.username}</div>
@@ -1519,12 +1532,12 @@ function renderCharts() {
   const cafeChartEl = document.getElementById('cafeBarChart');
   if (cafeChartEl) {
     const maxCafe = Math.max(...gCafes.map(cafe => {
-      return gPosts.filter(p=>p.cafe_id===cafe.id&&new Date(p.worked_at)>=monthStart).reduce((s,p)=>s+p.amount,0)
-           + gComments.filter(c=>c.cafe_id===cafe.id&&new Date(c.worked_at)>=monthStart).reduce((s,c)=>s+c.amount,0);
+      return gPosts.filter(p=>p.cafe_id===cafe.id&&p.worked_at.slice(0,10)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
+           + gComments.filter(c=>c.cafe_id===cafe.id&&c.worked_at.slice(0,10)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
     }), 1);
     cafeChartEl.innerHTML = gCafes.map(cafe => {
-      const earn = gPosts.filter(p=>p.cafe_id===cafe.id&&new Date(p.worked_at)>=monthStart).reduce((s,p)=>s+p.amount,0)
-                 + gComments.filter(c=>c.cafe_id===cafe.id&&new Date(c.worked_at)>=monthStart).reduce((s,c)=>s+c.amount,0);
+      const earn = gPosts.filter(p=>p.cafe_id===cafe.id&&p.worked_at.slice(0,10)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
+                 + gComments.filter(c=>c.cafe_id===cafe.id&&c.worked_at.slice(0,10)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
       const pct = Math.round(earn/maxCafe*100);
       return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
         <div class="bar-lbl">☕ ${cafe.name}</div>
@@ -1538,17 +1551,17 @@ function renderCharts() {
 
 /* ===================== 목표 렌더 ===================== */
 function renderGoals() {
-  const now = new Date();
-  const todayStart  = new Date(now); todayStart.setHours(0,0,0,0);
-  const weekStart   = new Date(now); weekStart.setDate(now.getDate()-now.getDay()); weekStart.setHours(0,0,0,0);
-  const monthStart  = new Date(now.getFullYear(), now.getMonth(), 1);
+  const todayStr     = getKSTDateStr();
+  const nowKST       = new Date(new Date().getTime() + 9*60*60*1000);
+  const weekStartStr = getKSTDateStr(new Date(new Date().getTime() + 9*60*60*1000 - nowKST.getDay()*86400000));
+  const monthStartStr= todayStr.slice(0,7) + '-01';
 
-  const todayEarn  = gPosts.filter(p=>new Date(p.worked_at)>=todayStart).reduce((s,p)=>s+p.amount,0)
-                   + gComments.filter(c=>new Date(c.worked_at)>=todayStart).reduce((s,c)=>s+c.amount,0);
-  const weekEarn   = gPosts.filter(p=>new Date(p.worked_at)>=weekStart).reduce((s,p)=>s+p.amount,0)
-                   + gComments.filter(c=>new Date(c.worked_at)>=weekStart).reduce((s,c)=>s+c.amount,0);
-  const monthEarn  = gPosts.filter(p=>new Date(p.worked_at)>=monthStart).reduce((s,p)=>s+p.amount,0)
-                   + gComments.filter(c=>new Date(c.worked_at)>=monthStart).reduce((s,c)=>s+c.amount,0);
+  const todayEarn  = gPosts.filter(p=>p.worked_at.slice(0,10)===todayStr).reduce((s,p)=>s+p.amount,0)
+                   + gComments.filter(c=>c.worked_at.slice(0,10)===todayStr).reduce((s,c)=>s+c.amount,0);
+  const weekEarn   = gPosts.filter(p=>p.worked_at.slice(0,10)>=weekStartStr).reduce((s,p)=>s+p.amount,0)
+                   + gComments.filter(c=>c.worked_at.slice(0,10)>=weekStartStr).reduce((s,c)=>s+c.amount,0);
+  const monthEarn  = gPosts.filter(p=>p.worked_at.slice(0,10)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
+                   + gComments.filter(c=>c.worked_at.slice(0,10)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
 
   const dailyGoal   = (gGoals.find(g=>g.type==='daily')?.amount)   || 30000;
   const weeklyGoal  = (gGoals.find(g=>g.type==='weekly')?.amount)  || 100000;
@@ -1641,7 +1654,7 @@ async function saveWork() {
   const cafeId     = document.getElementById('mCafe').value;
   const type       = document.getElementById('modalType').value;
   const dateVal    = document.getElementById('mDate').value;
-  const workedAt   = dateVal ? new Date(dateVal).toISOString() : new Date().toISOString();
+  const workedAt   = dateVal ? getKSTISOStr(new Date(dateVal)) : getKSTISOStr();
 
   const saveBtn = document.getElementById('saveWorkBtn');
   if (saveBtn) { saveBtn.textContent = '저장 중...'; saveBtn.disabled = true; }
@@ -1670,7 +1683,7 @@ async function saveQuick() {
   const cafeId    = document.getElementById('qCafe').value;
   const type      = document.getElementById('quickType').value;
   const dateVal   = document.getElementById('qDate').value;
-  const workedAt  = dateVal ? new Date(dateVal).toISOString() : new Date().toISOString();
+  const workedAt  = dateVal ? getKSTISOStr(new Date(dateVal)) : getKSTISOStr();
 
   const btn = document.getElementById('saveQuickBtn');
   if (btn) { btn.textContent = '저장 중...'; btn.disabled = true; }
