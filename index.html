@@ -1188,14 +1188,11 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
       <div class="settings-card full">
         <div class="settings-title">☕ 카페 목록 관리</div>
-        <div class="cafe-settings-list" id="cafeSettingsList">
-          <div class="cafe-setting-item"><input value="팰리세이드 LX3 클럽"><button class="cafe-del" onclick="this.parentElement.remove()">✕</button></div>
-          <div class="cafe-setting-item"><input value="셀토스 SP3 매니아"><button class="cafe-del" onclick="this.parentElement.remove()">✕</button></div>
-          <div class="cafe-setting-item"><input value="웃긴 유머 모음"><button class="cafe-del" onclick="this.parentElement.remove()">✕</button></div>
-          <div class="cafe-setting-item"><input value="일상 기록 카페"><button class="cafe-del" onclick="this.parentElement.remove()">✕</button></div>
-          <div class="cafe-setting-item"><input value="투싼 NX4 오너클럽"><button class="cafe-del" onclick="this.parentElement.remove()">✕</button></div>
+        <div class="cafe-settings-list" id="cafeSettingsList"></div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button class="add-item-btn" onclick="addCafeSetting()">+ 카페 추가</button>
+          <button id="saveCafeBtn" style="background:var(--accent);color:#fff;border:none;border-radius:10px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;" onclick="saveCafeSettings()">💾 카페 저장</button>
         </div>
-        <button class="add-item-btn" onclick="addCafeSetting()">+ 카페 추가</button>
       </div>
 
     </div>
@@ -1297,6 +1294,7 @@ async function loadAll() {
   renderCharts();
   renderGoals();
   populateSelects();
+  renderCafeSettings();
 }
 
 /* ===================== 오늘 필터 ===================== */
@@ -2171,6 +2169,61 @@ function addCafeSetting() {
   const item = document.createElement('div'); item.className = 'cafe-setting-item';
   item.innerHTML = `<input value="새 카페 이름"><button class="cafe-del" onclick="this.parentElement.remove()">✕</button>`;
   list.appendChild(item);
+}
+
+/* 카페 설정 목록 렌더 (gCafes 기반) */
+function renderCafeSettings() {
+  const list = document.getElementById('cafeSettingsList');
+  if (!list) return;
+  list.innerHTML = gCafes.map(c => `
+    <div class="cafe-setting-item" data-id="${c.id}">
+      <input value="${c.name}">
+      <button class="cafe-del" onclick="this.parentElement.remove()">✕</button>
+    </div>`).join('');
+}
+
+/* 카페 목록 Supabase 저장 */
+async function saveCafeSettings() {
+  const btn = document.getElementById('saveCafeBtn');
+  if (btn) { btn.textContent = '저장 중...'; btn.disabled = true; }
+
+  const items = document.querySelectorAll('#cafeSettingsList .cafe-setting-item');
+  const currentIds = new Set(gCafes.map(c => c.id));
+  const uiIds = new Set();
+
+  for (const item of items) {
+    const name = item.querySelector('input').value.trim();
+    if (!name) continue;
+    const id = item.dataset.id;
+
+    if (id && currentIds.has(id)) {
+      // 기존 카페 이름 수정
+      uiIds.add(id);
+      await sb.from('cafes').update({ name }).eq('id', id);
+    } else {
+      // 새 카페 추가
+      await sb.from('cafes').insert({ name, is_active: true });
+    }
+  }
+
+  // 목록에서 삭제된 카페 비활성화 (완전 삭제 대신 is_active=false)
+  for (const cafe of gCafes) {
+    if (!uiIds.has(cafe.id)) {
+      await sb.from('cafes').update({ is_active: false }).eq('id', cafe.id);
+    }
+  }
+
+  await loadAll(); // gCafes 갱신 + 리렌더
+
+  if (btn) {
+    btn.textContent = '✓ 저장됨!';
+    btn.style.background = '#22c55e';
+    setTimeout(() => {
+      btn.textContent = '💾 카페 저장';
+      btn.style.background = 'var(--accent)';
+      btn.disabled = false;
+    }, 2000);
+  }
 }
 
 /* ===================== COUNTUP ===================== */
