@@ -2170,8 +2170,22 @@ function addCafe() {
 function addCafeSetting() {
   const list = document.getElementById('cafeSettingsList');
   const item = document.createElement('div'); item.className = 'cafe-setting-item';
-  item.innerHTML = `<input value="새 카페 이름"><button class="cafe-del" onclick="this.parentElement.remove()">✕</button>`;
+  // 신규 항목은 data-id 없음 — 저장 시 insert
+  item.innerHTML = `<input value="새 카페 이름"><button class="cafe-del" onclick="deleteCafeItem(this)">✕</button>`;
   list.appendChild(item);
+}
+
+/* ✕ 버튼: 기존 카페면 DB 비활성화, 신규면 그냥 DOM 제거 */
+async function deleteCafeItem(btn) {
+  const item = btn.parentElement;
+  const id = item.dataset.id;
+  if (id) {
+    // 기존 카페 → DB에서 비활성화
+    await sb.from('cafes').update({ is_active: false }).eq('id', id);
+    // gCafes에서도 제거
+    gCafes = gCafes.filter(c => c.id !== id);
+  }
+  item.remove();
 }
 
 /* 카페 설정 목록 렌더 (gCafes 기반) */
@@ -2181,17 +2195,13 @@ function renderCafeSettings() {
   list.innerHTML = gCafes.map(c => `
     <div class="cafe-setting-item" data-id="${c.id}">
       <input value="${c.name}">
-      <button class="cafe-del" onclick="this.parentElement.remove()">✕</button>
+      <button class="cafe-del" onclick="deleteCafeItem(this)">✕</button>
     </div>`).join('');
 }
 
-/* 카페 목록 Supabase 저장 */
+/* 카페 저장: 이름 수정 + 신규 insert만 처리 (삭제는 ✕ 버튼에서 즉시 처리) */
 async function saveCafeSettings() {
   const items = document.querySelectorAll('#cafeSettingsList .cafe-setting-item');
-
-  // 1) 화면에 남아있는 기존 카페 ID 수집
-  const keptIds = new Set();
-  const newNames = [];
 
   for (const item of items) {
     const name = item.querySelector('input').value.trim();
@@ -2199,25 +2209,13 @@ async function saveCafeSettings() {
     const id = item.dataset.id;
 
     if (id) {
-      // 기존 카페 — 이름 수정
-      keptIds.add(id);
+      // 기존 카페 — 이름만 업데이트
       await sb.from('cafes').update({ name }).eq('id', id);
     } else {
-      // 신규 카페 — 나중에 insert
-      newNames.push(name);
+      // 신규 카페 — insert 후 data-id 부여
+      const { data } = await sb.from('cafes').insert({ name, is_active: true }).select().single();
+      if (data) item.dataset.id = data.id;
     }
-  }
-
-  // 2) 화면에서 삭제된 기존 카페만 비활성화
-  for (const cafe of gCafes) {
-    if (!keptIds.has(cafe.id)) {
-      await sb.from('cafes').update({ is_active: false }).eq('id', cafe.id);
-    }
-  }
-
-  // 3) 신규 카페 insert (삭제 처리 완료 후)
-  for (const name of newNames) {
-    await sb.from('cafes').insert({ name, is_active: true });
   }
 }
 
