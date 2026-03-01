@@ -1054,7 +1054,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
         <div class="goal-set-title">일 목표 수익</div>
         <div class="goal-set-current" style="color:var(--accent)" id="goal-day-earn">0원</div>
         <div class="goal-input-row">
-          <input type="number" class="finput goal-input" id="goalDayInput" value="30000">
+          <input type="text" class="finput goal-input fmt-number" id="goalDayInput" value="30,000" inputmode="numeric">
           <button class="goal-set-btn" onclick="saveGoal('daily','goalDayInput')">설정</button>
         </div>
         <div class="big-progress"><div class="big-fill gf-a" id="goal-day-bar" style="width:0%"></div></div>
@@ -1064,7 +1064,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
         <div class="goal-set-title">주 목표 수익</div>
         <div class="goal-set-current" style="color:var(--pink)" id="goal-week-earn">0원</div>
         <div class="goal-input-row">
-          <input type="number" class="finput goal-input" id="goalWeekInput" value="100000">
+          <input type="text" class="finput goal-input fmt-number" id="goalWeekInput" value="100,000" inputmode="numeric">
           <button class="goal-set-btn" onclick="saveGoal('weekly','goalWeekInput')">설정</button>
         </div>
         <div class="big-progress"><div class="big-fill gf-p" id="goal-week-bar" style="width:0%"></div></div>
@@ -1074,7 +1074,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
         <div class="goal-set-title">월 목표 수익</div>
         <div class="goal-set-current" style="color:var(--green)" id="goal-month-earn">0원</div>
         <div class="goal-input-row">
-          <input type="number" class="finput goal-input" id="goalMonthInput" value="300000">
+          <input type="text" class="finput goal-input fmt-number" id="goalMonthInput" value="300,000" inputmode="numeric">
           <button class="goal-set-btn" onclick="saveGoal('monthly','goalMonthInput')">설정</button>
         </div>
         <div class="big-progress"><div class="big-fill gf-g" id="goal-month-bar" style="width:0%"></div></div>
@@ -1096,10 +1096,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
       <div class="settings-card">
         <div class="settings-title">💰 단가 설정</div>
-        <div class="setting-row"><span class="setting-key">게시물 단가</span><input class="setting-input" type="number" value="200" style="color:var(--green)"> <span style="font-size:10px;color:var(--text3)">원/개</span></div>
-        <div class="setting-row"><span class="setting-key">댓글 단가</span><input class="setting-input" type="number" value="20" style="color:var(--yellow)"> <span style="font-size:10px;color:var(--text3)">원/개</span></div>
-        <div class="setting-row"><span class="setting-key">일 목표</span><input class="setting-input" type="number" value="30000"> <span style="font-size:10px;color:var(--text3)">원</span></div>
-        <div class="setting-row"><span class="setting-key">월 목표</span><input class="setting-input" type="number" value="300000"> <span style="font-size:10px;color:var(--text3)">원</span></div>
+        <div class="setting-row"><span class="setting-key">게시물 단가</span><input class="setting-input fmt-number" type="text" id="pricePost" value="200" inputmode="numeric" style="color:var(--green)"> <span style="font-size:10px;color:var(--text3)">원/개</span></div>
+        <div class="setting-row"><span class="setting-key">댓글 단가</span><input class="setting-input fmt-number" type="text" id="priceComment" value="20" inputmode="numeric" style="color:var(--yellow)"> <span style="font-size:10px;color:var(--text3)">원/개</span></div>
+        <div class="setting-row"><span class="setting-key">일 목표</span><input class="setting-input fmt-number" type="text" id="settingDayGoal" value="30,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">원</span></div>
+        <div class="setting-row"><span class="setting-key">월 목표</span><input class="setting-input fmt-number" type="text" id="settingMonthGoal" value="300,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">원</span></div>
       </div>
 
       <!-- Reset info card -->
@@ -1673,8 +1673,24 @@ async function saveQuick() {
   await loadAll();
 }
 
-/* ===================== 초기 로드 ===================== */
-window.addEventListener('DOMContentLoaded', () => { loadAll(); });
+/* ===================== 숫자 자동 콤마 ===================== */
+function formatNumberInput(el) {
+  const raw = el.value.replace(/,/g, '').replace(/[^0-9]/g, '');
+  if (raw === '') { el.value = ''; return; }
+  el.value = parseInt(raw).toLocaleString('ko-KR');
+}
+
+// 페이지 로드 후 .fmt-number 클래스 입력 필드에 이벤트 연결
+window.addEventListener('DOMContentLoaded', () => {
+  loadAll();
+  document.querySelectorAll('.fmt-number').forEach(el => {
+    el.addEventListener('input', () => formatNumberInput(el));
+    // 초기값도 포맷
+    if (el.value) formatNumberInput(el);
+  });
+});
+
+
 
 function setDate() {
   const now = new Date();
@@ -1927,7 +1943,8 @@ function buildCalForMonth(year, month) {
 
 /* 목표 저장 */
 async function saveGoal(type, inputId) {
-  const amount = parseInt(document.getElementById(inputId).value);
+  const raw = document.getElementById(inputId).value.replace(/,/g, '');
+  const amount = parseInt(raw);
   if (!amount || amount <= 0) return;
   const existing = gGoals.find(g=>g.type===type);
   if (existing) {
