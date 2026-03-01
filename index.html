@@ -1263,6 +1263,7 @@ let gCafes    = [];
 let gPosts    = [];
 let gComments = [];
 let gGoals    = [];
+let gSettings = {}; // key: value 형태로 저장
 let calYear   = new Date().getFullYear();
 let calMonth2 = new Date().getMonth();
 const pages   = ['dashboard','records','calendar','charts','goals','settings'];
@@ -1279,12 +1280,14 @@ async function loadAll() {
     { data: ps },
     { data: cms },
     { data: gls },
+    { data: sts },
   ] = await Promise.all([
     sb.from('accounts').select('*').eq('is_active', true).order('username'),
     sb.from('cafes').select('*').eq('is_active', true).order('name'),
     sb.from('posts').select('*, account:accounts(*), cafe:cafes(*)').order('worked_at', { ascending: false }).limit(500),
     sb.from('comments').select('*, account:accounts(*), cafe:cafes(*)').order('worked_at', { ascending: false }).limit(500),
     sb.from('goals').select('*'),
+    sb.from('settings').select('*'),
   ]);
 
   gAccounts = accs || [];
@@ -1292,7 +1295,10 @@ async function loadAll() {
   gPosts    = ps   || [];
   gComments = cms  || [];
   gGoals    = gls  || [];
+  gSettings = {};
+  (sts || []).forEach(s => { gSettings[s.key] = s.value; });
 
+  applySettings();
   renderDashboard();
   renderRecords();
   renderCalendar();
@@ -1813,14 +1819,6 @@ function getISOWeek(d) {
 }
 checkResets();
 
-/* ===================== THEME ===================== */
-function toggleTheme() {
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  document.getElementById('btn-dark').classList.toggle('active', !isDark);
-  document.getElementById('btn-light').classList.toggle('active', isDark);
-}
-document.getElementById('btn-dark').classList.add('active');
 
 /* ===================== PAGE SWITCH ===================== */
 
@@ -2027,13 +2025,139 @@ function onEditableBlur(e) {
     const vt = document.getElementById('vt-'+page); if(vt) vt.textContent = el.textContent;
     pageTitleMap[page] = el.textContent;
   }
+  // Supabase에 저장
+  if(id) saveSetting('editable_'+id, el.textContent);
 }
-function syncEdit(id, val) { const el = document.getElementById(id); if(el) el.textContent = val; }
+function syncEdit(id, val) {
+  const el = document.getElementById(id); if(el) el.textContent = val;
+  saveSetting('input_'+id, val);
+}
 function syncNav(page, val) {
   const n = document.getElementById('edit-nav-'+page); if(n) n.textContent = val;
   const v = document.getElementById('vt-'+page); if(v) v.textContent = val;
   pageTitleMap[page] = val;
+  saveSetting('nav_'+page, val);
 }
+
+/* ===================== 설정 저장/로드 ===================== */
+async function saveSetting(key, value) {
+  await sb.from('settings').upsert({ key, value: String(value) }, { onConflict: 'key' });
+  gSettings[key] = String(value);
+}
+
+function applySettings() {
+  // 앱 이름 & 브랜딩
+  const fields = [
+    'edit-appname', 'edit-eyebrow', 'edit-appsub',
+    'edit-lbl-today', 'edit-lbl-week', 'edit-lbl-month',
+    'edit-tbl-title', 'edit-form-title', 'edit-cafe-title', 'edit-acc-title',
+  ];
+  fields.forEach(id => {
+    const key = 'editable_' + id;
+    if (gSettings[key]) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = gSettings[key];
+    }
+  });
+
+  // 설정 input 동기화 (s-appname 등)
+  const inputSyncMap = {'edit-appname':'s-appname','edit-eyebrow':'s-appeyebrow','edit-appsub':'s-appsub'};
+  Object.entries(inputSyncMap).forEach(([editId, inputId]) => {
+    const key = 'editable_' + editId;
+    if (gSettings[key]) {
+      const s = document.getElementById(inputId);
+      if (s) s.value = gSettings[key];
+    }
+  });
+
+  // 메뉴 이름
+  ['dashboard','records','calendar','charts','goals','settings'].forEach(page => {
+    const key = 'nav_' + page;
+    if (gSettings[key]) {
+      const n = document.getElementById('edit-nav-'+page);
+      const v = document.getElementById('vt-'+page);
+      if (n) n.textContent = gSettings[key];
+      if (v) v.textContent = gSettings[key];
+      pageTitleMap[page] = gSettings[key];
+      // 설정 페이지 input도 동기화
+      const inp = document.querySelector(`.nav-setting-item input[oninput*="'${page}'"]`);
+      if (inp) inp.value = gSettings[key];
+    }
+  });
+
+  // 타이포그래피
+  if (gSettings['font_scale']) applyFontScale(gSettings['font_scale']);
+  if (gSettings['font_headline']) applyHeadlineFont(gSettings['font_headline']);
+  if (gSettings['font_body']) applyBodyFont(gSettings['font_body']);
+
+  // 테마
+  if (gSettings['theme']) {
+    document.documentElement.setAttribute('data-theme', gSettings['theme']);
+    document.getElementById('btn-dark')?.classList.toggle('active', gSettings['theme']==='dark');
+    document.getElementById('btn-light')?.classList.toggle('active', gSettings['theme']==='light');
+  }
+}
+
+function applyFontScale(val, btn) {
+  val = parseInt(val);
+  const scale = val / 100;
+  document.documentElement.style.setProperty('--font-scale', scale);
+  const slider = document.getElementById('fontScaleSlider');
+  if (slider) {
+    slider.value = val;
+    const pct = ((val - 80) / (130 - 80)) * 100;
+    slider.style.background = `linear-gradient(90deg, var(--accent) ${pct}%, var(--border) ${pct}%)`;
+  }
+  const label = document.getElementById('fontScaleVal');
+  if (label) label.textContent = val + '%';
+  document.querySelectorAll('.scale-preset').forEach(b => b.classList.remove('active'));
+  if (btn) {
+    btn.classList.add('active');
+  } else {
+    document.querySelectorAll('.scale-preset').forEach(b => {
+      if (b.textContent.includes(val + '%')) b.classList.add('active');
+    });
+  }
+  saveSetting('font_scale', val);
+}
+
+function applyHeadlineFont(val) {
+  document.documentElement.style.setProperty('--font-headline', val);
+  document.querySelectorAll('#headlineFontPicker .font-opt').forEach(el => {
+    el.classList.toggle('active', el.querySelector('input').value === val);
+    el.querySelector('input').checked = (el.querySelector('input').value === val);
+  });
+  saveSetting('font_headline', val);
+}
+
+function applyBodyFont(val) {
+  document.documentElement.style.setProperty('--font-body', val);
+  document.querySelectorAll('#bodyFontPicker .font-opt').forEach(el => {
+    el.classList.toggle('active', el.querySelector('input').value === val);
+    el.querySelector('input').checked = (el.querySelector('input').value === val);
+  });
+  saveSetting('font_body', val);
+}
+
+function toggleTheme() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  document.getElementById('btn-dark').classList.toggle('active', !isDark);
+  document.getElementById('btn-light').classList.toggle('active', isDark);
+  saveSetting('theme', newTheme);
+}
+
+// 슬라이더 이벤트 연결 (DOMContentLoaded 후)
+window.addEventListener('DOMContentLoaded', () => {
+  const slider = document.getElementById('fontScaleSlider');
+  if (slider) {
+    slider.addEventListener('input', function() {
+      const pct = ((this.value - 80) / (130 - 80)) * 100;
+      this.style.background = `linear-gradient(90deg, var(--accent) ${pct}%, var(--border) ${pct}%)`;
+    });
+  }
+});
 
 /* Cafe management */
 function addCafe() {
@@ -2074,89 +2198,6 @@ window.addEventListener('load', () => {
 
 
 /* ===================== TYPOGRAPHY CONTROLS ===================== */
-function applyFontScale(val, btn) {
-  val = parseInt(val);
-  const scale = val / 100;
-  document.documentElement.style.setProperty('--font-scale', scale);
-
-  // Update slider
-  const slider = document.getElementById('fontScaleSlider');
-  if (slider) {
-    slider.value = val;
-    // Update slider fill
-    const pct = ((val - 80) / (130 - 80)) * 100;
-    slider.style.background = `linear-gradient(90deg, var(--accent) ${pct}%, var(--border) ${pct}%)`;
-  }
-
-  // Update label
-  const label = document.getElementById('fontScaleVal');
-  if (label) label.textContent = val + '%';
-
-  // Update preset buttons
-  document.querySelectorAll('.scale-preset').forEach(b => b.classList.remove('active'));
-  if (btn) {
-    btn.classList.add('active');
-  } else {
-    // Find matching preset
-    document.querySelectorAll('.scale-preset').forEach(b => {
-      if (b.textContent.includes(val + '%')) b.classList.add('active');
-    });
-  }
-
-  // Persist
-  localStorage.setItem('fontScale', val);
-}
-
-function applyHeadlineFont(val) {
-  document.documentElement.style.setProperty('--font-headline', val);
-  document.querySelectorAll('#headlineFontPicker .font-opt').forEach(el => {
-    el.classList.toggle('active', el.querySelector('input').value === val);
-  });
-  localStorage.setItem('fontHeadline', val);
-}
-
-function applyBodyFont(val) {
-  document.documentElement.style.setProperty('--font-body', val);
-  document.querySelectorAll('#bodyFontPicker .font-opt').forEach(el => {
-    el.classList.toggle('active', el.querySelector('input').value === val);
-  });
-  localStorage.setItem('fontBody', val);
-}
-
-// Init slider fill on load
-(function initSlider() {
-  const slider = document.getElementById('fontScaleSlider');
-  if (slider) {
-    const savedScale = localStorage.getItem('fontScale');
-    if (savedScale) {
-      applyFontScale(savedScale);
-    } else {
-      const pct = ((100 - 80) / (130 - 80)) * 100;
-      slider.style.background = `linear-gradient(90deg, var(--accent) ${pct}%, var(--border) ${pct}%)`;
-    }
-    slider.addEventListener('input', function() {
-      const pct = ((this.value - 80) / (130 - 80)) * 100;
-      this.style.background = `linear-gradient(90deg, var(--accent) ${pct}%, var(--border) ${pct}%)`;
-    });
-  }
-  // Restore saved fonts
-  const savedHeadline = localStorage.getItem('fontHeadline');
-  const savedBody     = localStorage.getItem('fontBody');
-  if (savedHeadline) {
-    document.documentElement.style.setProperty('--font-headline', savedHeadline);
-    document.querySelectorAll('#headlineFontPicker .font-opt').forEach(el => {
-      el.classList.toggle('active', el.querySelector('input').value === savedHeadline);
-      el.querySelector('input').checked = (el.querySelector('input').value === savedHeadline);
-    });
-  }
-  if (savedBody) {
-    document.documentElement.style.setProperty('--font-body', savedBody);
-    document.querySelectorAll('#bodyFontPicker .font-opt').forEach(el => {
-      el.classList.toggle('active', el.querySelector('input').value === savedBody);
-      el.querySelector('input').checked = (el.querySelector('input').value === savedBody);
-    });
-  }
-})();
 
 </script>
 </body>
