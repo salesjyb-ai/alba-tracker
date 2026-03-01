@@ -838,6 +838,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
       <div class="live-badge"><div class="live-dot"></div>LIVE</div>
       <button class="btn btn-edit" id="editToggleBtn" onclick="toggleEditMode()">✏️ 편집</button>
       <button class="btn btn-ghost" onclick="document.getElementById('exportModal').classList.add('open')">⬇ 내보내기</button>
+      <button id="saveAllBtn" style="display:none;align-items:center;gap:6px;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;transition:0.2s" onclick="saveAllSettings()">💾 저장</button>
       <button class="btn btn-primary" onclick="document.getElementById('addModal').classList.add('open')">＋ 작업 추가</button>
     </div>
   </div>
@@ -1089,35 +1090,33 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
       <div class="settings-card">
         <div class="settings-title">🎨 앱 이름 & 브랜딩</div>
-        <div class="setting-row"><span class="setting-key">앱 이름</span><input class="setting-input" value="알바 트래커" oninput="syncEdit('edit-appname',this.value)"></div>
-        <div class="setting-row"><span class="setting-key">상단 태그</span><input class="setting-input" value="NAVER CAFE" oninput="syncEdit('edit-eyebrow',this.value)"></div>
-        <div class="setting-row"><span class="setting-key">설명</span><input class="setting-input" value="작업 관리 & 수익 현황" oninput="syncEdit('edit-appsub',this.value)"></div>
+        <div class="setting-row"><span class="setting-key">앱 이름</span><input class="setting-input" id="s-appname" value="알바 트래커"></div>
+        <div class="setting-row"><span class="setting-key">상단 태그</span><input class="setting-input" id="s-appeyebrow" value="NAVER CAFE"></div>
+        <div class="setting-row"><span class="setting-key">설명</span><input class="setting-input" id="s-appsub" value="작업 관리 & 수익 현황"></div>
       </div>
 
       <div class="settings-card">
-        <div class="settings-title">💰 단가 설정</div>
-        <div class="setting-row"><span class="setting-key">게시물 단가</span><input class="setting-input fmt-number" type="text" id="pricePost" value="200" inputmode="numeric" style="color:var(--green)"> <span style="font-size:10px;color:var(--text3)">원/개</span><button class="goal-set-btn" style="margin-left:6px" onclick="saveGoal('price_post','pricePost')">저장</button></div>
-        <div class="setting-row"><span class="setting-key">댓글 단가</span><input class="setting-input fmt-number" type="text" id="priceComment" value="20" inputmode="numeric" style="color:var(--yellow)"> <span style="font-size:10px;color:var(--text3)">원/개</span><button class="goal-set-btn" style="margin-left:6px" onclick="saveGoal('price_comment','priceComment')">저장</button></div>
-        <div class="setting-row"><span class="setting-key">일 목표</span><input class="setting-input fmt-number" type="text" id="settingDayGoal" value="30,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">원</span><button class="goal-set-btn" style="margin-left:6px" onclick="saveGoal('daily','settingDayGoal')">저장</button></div>
-        <div class="setting-row"><span class="setting-key">월 목표</span><input class="setting-input fmt-number" type="text" id="settingMonthGoal" value="300,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">원</span><button class="goal-set-btn" style="margin-left:6px" onclick="saveGoal('monthly','settingMonthGoal')">저장</button></div>
+        <div class="settings-title">💰 단가 & 목표 설정</div>
+        <div class="setting-row"><span class="setting-key">게시물 단가</span><input class="setting-input fmt-number" type="text" id="pricePost" value="200" inputmode="numeric" style="color:var(--green)"> <span style="font-size:10px;color:var(--text3)">원/개</span></div>
+        <div class="setting-row"><span class="setting-key">댓글 단가</span><input class="setting-input fmt-number" type="text" id="priceComment" value="20" inputmode="numeric" style="color:var(--yellow)"> <span style="font-size:10px;color:var(--text3)">원/개</span></div>
+        <div class="setting-row"><span class="setting-key">일 목표</span><input class="setting-input fmt-number" type="text" id="settingDayGoal" value="30,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">원</span></div>
+        <div class="setting-row"><span class="setting-key">주 목표</span><input class="setting-input fmt-number" type="text" id="settingWeekGoal" value="100,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">원</span></div>
+        <div class="setting-row"><span class="setting-key">월 목표</span><input class="setting-input fmt-number" type="text" id="settingMonthGoal" value="300,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">원</span></div>
       </div>
 
       <!-- Reset info card -->
       <div class="settings-card">
         <div class="settings-title">🔄 자동 초기화 규칙</div>
-
         <div class="reset-section">
           <div class="reset-section-title"><span class="reset-chip day" style="font-size:10px">DAY</span> 오늘 수익</div>
           <div class="reset-section-desc">매일 자정 00:00에 초기화<br>초기화 항목: 오늘 수익, 오늘 게시물 수, 오늘 댓글 수</div>
           <div class="reset-next day">⏱ 다음 초기화: <span id="nextDay">--</span></div>
         </div>
-
         <div class="reset-section">
           <div class="reset-section-title"><span class="reset-chip week" style="font-size:10px">WEEK</span> 이번 주 수익</div>
           <div class="reset-section-desc">매주 일요일 자정 00:00에 초기화<br>초기화 항목: 이번 주 수익, 주간 게시물/댓글 수</div>
           <div class="reset-next week">📅 다음 초기화: <span id="nextWeek">--</span> (일요일)</div>
         </div>
-
         <div class="reset-section">
           <div class="reset-section-title"><span class="reset-chip month" style="font-size:10px">MONTH</span> 이번 달 수익</div>
           <div class="reset-section-desc">매월 마지막 날 자정 00:00에 초기화<br>초기화 항목: 이번 달 수익, 월간 게시물/댓글 수</div>
@@ -1128,18 +1127,17 @@ input[type="range"]::-webkit-slider-thumb:hover {
       <div class="settings-card">
         <div class="settings-title">📋 메뉴 이름 편집</div>
         <div class="nav-settings-list">
-          <div class="nav-setting-item"><span>📊</span><input value="대시보드" oninput="syncNav('dashboard',this.value)"></div>
-          <div class="nav-setting-item"><span>📝</span><input value="작업 기록" oninput="syncNav('records',this.value)"></div>
-          <div class="nav-setting-item"><span>📅</span><input value="달력 뷰" oninput="syncNav('calendar',this.value)"></div>
-          <div class="nav-setting-item"><span>📈</span><input value="통계 차트" oninput="syncNav('charts',this.value)"></div>
-          <div class="nav-setting-item"><span>🎯</span><input value="목표 & 달성률" oninput="syncNav('goals',this.value)"></div>
+          <div class="nav-setting-item"><span>📊</span><input id="nav-dashboard" value="대시보드"></div>
+          <div class="nav-setting-item"><span>📝</span><input id="nav-records" value="작업 기록"></div>
+          <div class="nav-setting-item"><span>📅</span><input id="nav-calendar" value="달력 뷰"></div>
+          <div class="nav-setting-item"><span>📈</span><input id="nav-charts" value="통계 차트"></div>
+          <div class="nav-setting-item"><span>🎯</span><input id="nav-goals" value="목표 & 달성률"></div>
         </div>
       </div>
 
       <div class="settings-card full">
         <div class="settings-title">🔤 타이포그래피 설정</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;align-items:start;">
-
           <!-- Font Scale Slider -->
           <div>
             <div style="font-family:var(--font-mono);font-size:calc(var(--fs-xs)*var(--font-scale));color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-weight:600;margin-bottom:10px;">전체 폰트 크기</div>
@@ -1155,7 +1153,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
               <span id="fontScaleVal" style="font-family:var(--font-headline);font-size:calc(var(--fs-md)*var(--font-scale));font-weight:800;color:var(--accent)">100%</span>
               <span style="font-family:var(--font-mono);font-size:calc(var(--fs-xs)*var(--font-scale));color:var(--text3)">130%</span>
             </div>
-            <!-- Preset buttons -->
             <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
               <button class="scale-preset" onclick="applyFontScale(85,this)">소형 85%</button>
               <button class="scale-preset active" onclick="applyFontScale(100,this)">기본 100%</button>
@@ -1163,7 +1160,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
               <button class="scale-preset" onclick="applyFontScale(120,this)">대형 120%</button>
             </div>
           </div>
-
           <!-- Headline font picker -->
           <div>
             <div style="font-family:var(--font-mono);font-size:calc(var(--fs-xs)*var(--font-scale));color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-weight:600;margin-bottom:10px;">헤드라인 폰트</div>
@@ -1173,7 +1169,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
               <label class="font-opt"><input type="radio" name="hfont" value="'Noto Sans KR',sans-serif" onchange="applyHeadlineFont(this.value)"> <span style="font-family:'Noto Sans KR',sans-serif;font-weight:700;font-size:15px;">Noto Sans KR</span></label>
             </div>
           </div>
-
           <!-- Body font picker -->
           <div>
             <div style="font-family:var(--font-mono);font-size:calc(var(--fs-xs)*var(--font-scale));color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-weight:600;margin-bottom:10px;">본문 폰트</div>
@@ -1183,15 +1178,12 @@ input[type="range"]::-webkit-slider-thumb:hover {
               <label class="font-opt"><input type="radio" name="bfont" value="'Inter',monospace" onchange="applyBodyFont(this.value)"> <span style="font-family:'Inter',monospace;font-size:15px;">Inter Mono</span></label>
             </div>
           </div>
-
         </div>
-
         <!-- Preview -->
         <div id="fontPreview" style="margin-top:20px;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
           <div style="font-family:var(--font-headline);font-size:calc(var(--fs-2xl)*var(--font-scale));font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;">알바 트래커 — 미리보기</div>
           <div style="font-family:var(--font-body);font-size:calc(var(--fs-base)*var(--font-scale));color:var(--text2);line-height:1.6;">오늘의 게시물 수익과 댓글 수익을 실시간으로 확인하세요. <span style="font-family:var(--font-mono);font-size:calc(var(--fs-xs)*var(--font-scale));color:var(--accent);font-weight:600;">+12,800원</span></div>
         </div>
-
       </div>
 
       <div class="settings-card full">
@@ -1831,7 +1823,27 @@ function switchView(name, navEl, tabEl) {
   if(navEl) navEl.classList.add('active');
   document.querySelectorAll('.vtab').forEach(el => el.classList.remove('active'));
   if(tabEl) tabEl.classList.add('active');
-  document.getElementById('edit-page-title').textContent = pageTitleMap[name];
+  document.getElementById('edit-page-title').textContent = pageTitleMap[name] || name;
+
+  // 페이지별 저장 버튼 표시
+  const saveBtn = document.getElementById('saveAllBtn');
+  if (saveBtn) {
+    // 저장 버튼을 보여줄 페이지 목록
+    const savablePages = ['settings','dashboard','records','calendar','charts','goals'];
+    saveBtn.style.display = savablePages.includes(name) ? 'inline-flex' : 'none';
+
+    // 페이지별 저장 레이블과 함수 설정
+    const labelMap = {
+      settings: '💾 전체 저장',
+      dashboard: '💾 저장',
+      records:  '💾 저장',
+      calendar: '💾 저장',
+      charts:   '💾 저장',
+      goals:    '💾 저장',
+    };
+    saveBtn.textContent = labelMap[name] || '💾 저장';
+    saveBtn.dataset.page = name;
+  }
 }
 
 /* ===================== FORMS ===================== */
@@ -2047,53 +2059,41 @@ async function saveSetting(key, value) {
 
 function applySettings() {
   // 앱 이름 & 브랜딩
-  const fields = [
-    'edit-appname', 'edit-eyebrow', 'edit-appsub',
-    'edit-lbl-today', 'edit-lbl-week', 'edit-lbl-month',
-    'edit-tbl-title', 'edit-form-title', 'edit-cafe-title', 'edit-acc-title',
-  ];
-  fields.forEach(id => {
-    const key = 'editable_' + id;
-    if (gSettings[key]) {
+  const brandMap = {
+    'branding_appname': ['edit-appname','s-appname'],
+    'branding_eyebrow': ['edit-eyebrow','s-appeyebrow'],
+    'branding_appsub':  ['edit-appsub',  's-appsub'],
+  };
+  Object.entries(brandMap).forEach(([key, ids]) => {
+    if (gSettings[key]) ids.forEach(id => {
       const el = document.getElementById(id);
-      if (el) el.textContent = gSettings[key];
-    }
-  });
-
-  // 설정 input 동기화 (s-appname 등)
-  const inputSyncMap = {'edit-appname':'s-appname','edit-eyebrow':'s-appeyebrow','edit-appsub':'s-appsub'};
-  Object.entries(inputSyncMap).forEach(([editId, inputId]) => {
-    const key = 'editable_' + editId;
-    if (gSettings[key]) {
-      const s = document.getElementById(inputId);
-      if (s) s.value = gSettings[key];
-    }
+      if (el) { if (el.tagName==='INPUT') el.value = gSettings[key]; else el.textContent = gSettings[key]; }
+    });
   });
 
   // 메뉴 이름
-  ['dashboard','records','calendar','charts','goals','settings'].forEach(page => {
+  ['dashboard','records','calendar','charts','goals'].forEach(page => {
     const key = 'nav_' + page;
     if (gSettings[key]) {
       const n = document.getElementById('edit-nav-'+page);
       const v = document.getElementById('vt-'+page);
+      const inp = document.getElementById('nav-'+page);
       if (n) n.textContent = gSettings[key];
       if (v) v.textContent = gSettings[key];
-      pageTitleMap[page] = gSettings[key];
-      // 설정 페이지 input도 동기화
-      const inp = document.querySelector(`.nav-setting-item input[oninput*="'${page}'"]`);
-      if (inp) inp.value = gSettings[key];
+      if (inp) inp.value   = gSettings[key];
+      pageTitleMap[page]   = gSettings[key];
     }
   });
 
   // 타이포그래피
-  if (gSettings['font_scale']) applyFontScale(gSettings['font_scale']);
+  if (gSettings['font_scale'])    applyFontScale(gSettings['font_scale']);
   if (gSettings['font_headline']) applyHeadlineFont(gSettings['font_headline']);
-  if (gSettings['font_body']) applyBodyFont(gSettings['font_body']);
+  if (gSettings['font_body'])     applyBodyFont(gSettings['font_body']);
 
   // 테마
   if (gSettings['theme']) {
     document.documentElement.setAttribute('data-theme', gSettings['theme']);
-    document.getElementById('btn-dark')?.classList.toggle('active', gSettings['theme']==='dark');
+    document.getElementById('btn-dark')?.classList.toggle('active',  gSettings['theme']==='dark');
     document.getElementById('btn-light')?.classList.toggle('active', gSettings['theme']==='light');
   }
 }
@@ -2192,9 +2192,121 @@ window.addEventListener('load', () => {
   }, 300);
 });
 
-/* ===================== CALENDAR ===================== */
-// renderCalendar는 위 Supabase 섹션에서 정의됨
-// 달력 초기 렌더는 loadAll() → renderCalendar() 에서 처리
+/* ===================== 전체 저장 (페이지별 분기) ===================== */
+async function saveAllSettings() {
+  const btn = document.getElementById('saveAllBtn');
+  const page = btn?.dataset.page || 'settings';
+
+  const origText = btn?.textContent || '💾 저장';
+  if (btn) { btn.textContent = '저장 중...'; btn.disabled = true; btn.style.opacity = '0.7'; }
+
+  try {
+    if (page === 'settings') {
+      // 설정 페이지: 전체 저장
+      await Promise.all([
+        saveBranding(),
+        savePriceSettings(),
+        saveNavNames(),
+        saveTypography(),
+      ]);
+    } else if (page === 'goals') {
+      await savePriceSettings();
+    } else {
+      // 대시보드/기록/달력/차트: 브랜딩·메뉴 이름만
+      await Promise.all([saveBranding(), saveNavNames()]);
+    }
+  } catch(e) { console.error(e); }
+
+  if (btn) {
+    btn.textContent = '✓ 저장됨!';
+    btn.style.background = '#22c55e';
+    btn.style.opacity = '1';
+    setTimeout(() => {
+      btn.textContent = origText;
+      btn.style.background = 'var(--accent)';
+      btn.disabled = false;
+    }, 2000);
+  }
+}
+
+/* ===================== 설정 카드 저장 함수들 ===================== */
+
+async function saveBranding() {
+  const appname  = document.getElementById('s-appname').value;
+  const eyebrow  = document.getElementById('s-appeyebrow').value;
+  const appsub   = document.getElementById('s-appsub').value;
+  await Promise.all([
+    saveSetting('branding_appname',  appname),
+    saveSetting('branding_eyebrow',  eyebrow),
+    saveSetting('branding_appsub',   appsub),
+  ]);
+  // 실시간 반영
+  const n = document.getElementById('edit-appname'); if(n) n.textContent = appname;
+  const e = document.getElementById('edit-eyebrow'); if(e) e.textContent = eyebrow;
+  const s = document.getElementById('edit-appsub');  if(s) s.textContent = appsub;
+}
+
+async function savePriceSettings() {
+  // 설정 페이지 또는 목표 페이지 어느 쪽이든 값 읽기
+  function readVal(id1, id2, fallback) {
+    const v1 = document.getElementById(id1)?.value.replace(/,/g,'');
+    const v2 = document.getElementById(id2)?.value.replace(/,/g,'');
+    return parseInt(v1 || v2) || fallback;
+  }
+  const pricePost    = readVal('pricePost',        '',                  200);
+  const priceComment = readVal('priceComment',     '',                  20);
+  const dayGoal      = readVal('settingDayGoal',   'goalDayInput',   30000);
+  const weekGoal     = readVal('settingWeekGoal',  'goalWeekInput',  100000);
+  const monthGoal    = readVal('settingMonthGoal', 'goalMonthInput', 300000);
+  await Promise.all([
+    sb.from('goals').upsert({type:'price_post',    amount:pricePost},    {onConflict:'type'}),
+    sb.from('goals').upsert({type:'price_comment', amount:priceComment}, {onConflict:'type'}),
+    sb.from('goals').upsert({type:'daily',         amount:dayGoal},      {onConflict:'type'}),
+    sb.from('goals').upsert({type:'weekly',        amount:weekGoal},     {onConflict:'type'}),
+    sb.from('goals').upsert({type:'monthly',       amount:monthGoal},    {onConflict:'type'}),
+  ]);
+  await loadAll();
+}
+
+async function saveNavNames() {
+  const navMap = {
+    dashboard: document.getElementById('nav-dashboard').value,
+    records:   document.getElementById('nav-records').value,
+    calendar:  document.getElementById('nav-calendar').value,
+    charts:    document.getElementById('nav-charts').value,
+    goals:     document.getElementById('nav-goals').value,
+  };
+  await Promise.all(Object.entries(navMap).map(([page, val]) => saveSetting('nav_'+page, val)));
+  // 실시간 반영
+  Object.entries(navMap).forEach(([page, val]) => {
+    const n = document.getElementById('edit-nav-'+page); if(n) n.textContent = val;
+    const v = document.getElementById('vt-'+page);       if(v) v.textContent = val;
+    pageTitleMap[page] = val;
+  });
+}
+
+async function saveTypography() {
+  const scale   = document.getElementById('fontScaleSlider').value;
+  const hfont   = document.querySelector('#headlineFontPicker input:checked')?.value || "'Satoshi','Inter',sans-serif";
+  const bfont   = document.querySelector('#bodyFontPicker input:checked')?.value     || "'Inter','Noto Sans KR',sans-serif";
+  await Promise.all([
+    saveSetting('font_scale',    scale),
+    saveSetting('font_headline', hfont),
+    saveSetting('font_body',     bfont),
+  ]);
+}
+
+// 저장 완료 피드백
+function showSaved(fnName) {
+  const btn = document.querySelector(`button[onclick="${fnName}()"]`);
+  if (!btn) return;
+  const orig = btn.innerHTML;
+  btn.innerHTML = '✓ 저장됨';
+  btn.style.background = 'var(--green)';
+  setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; }, 1800);
+}
+
+
 
 
 /* ===================== TYPOGRAPHY CONTROLS ===================== */
