@@ -1263,6 +1263,10 @@ let gCafes    = [];
 let gPosts    = [];
 let gComments = [];
 let gGoals    = [];
+let calYear   = new Date().getFullYear();
+let calMonth2 = new Date().getMonth();
+const pages   = ['dashboard','records','calendar','charts','goals','settings'];
+const pageTitleMap = { dashboard:'대시보드', records:'작업 기록', calendar:'달력 뷰', charts:'통계 차트', goals:'목표 & 달성률', settings:'편집 설정' };
 
 /* ===================== DB 로드 ===================== */
 async function loadAll() {
@@ -1757,22 +1761,10 @@ function checkResets() {
   const monthStr  = `${now.getFullYear()}-${now.getMonth()}`;
 
   if (localStorage.getItem('lastDay') && localStorage.getItem('lastDay') !== todayStr) {
-    document.getElementById('todayPosts').textContent = '0';
-    document.getElementById('todayComments').textContent = '0';
-    document.getElementById('workTable').innerHTML = '';
+    loadAll(); // 날짜 바뀌면 데이터 새로고침
   }
   localStorage.setItem('lastDay', todayStr);
-
-  if (localStorage.getItem('lastWeek') && localStorage.getItem('lastWeek') !== weekStr) {
-    // week reset — in real app: clear week earnings from DB
-    console.log('주간 초기화');
-  }
   localStorage.setItem('lastWeek', weekStr);
-
-  if (localStorage.getItem('lastMonth') && localStorage.getItem('lastMonth') !== monthStr) {
-    // month reset — in real app: clear month earnings from DB
-    console.log('월간 초기화');
-  }
   localStorage.setItem('lastMonth', monthStr);
 }
 
@@ -1795,8 +1787,6 @@ function toggleTheme() {
 document.getElementById('btn-dark').classList.add('active');
 
 /* ===================== PAGE SWITCH ===================== */
-const pages = ['dashboard','records','calendar','charts','goals','settings'];
-const pageTitleMap = { dashboard:'대시보드', records:'작업 기록', calendar:'달력 뷰', charts:'통계 차트', goals:'목표 & 달성률', settings:'편집 설정' };
 
 function switchView(name, navEl, tabEl) {
   pages.forEach(p => {
@@ -1890,8 +1880,6 @@ function resetRecordsFilter() {
 }
 
 /* 달력 월 이동 */
-let calYear = new Date().getFullYear();
-let calMonth2 = new Date().getMonth();
 function changeMonth(dir) {
   calMonth2 += dir;
   if (calMonth2 < 0) { calMonth2=11; calYear--; }
