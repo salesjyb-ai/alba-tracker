@@ -2188,27 +2188,36 @@ function renderCafeSettings() {
 /* 카페 목록 Supabase 저장 */
 async function saveCafeSettings() {
   const items = document.querySelectorAll('#cafeSettingsList .cafe-setting-item');
-  const currentIds = new Set(gCafes.map(c => c.id));
-  const uiIds = new Set();
+
+  // 1) 화면에 남아있는 기존 카페 ID 수집
+  const keptIds = new Set();
+  const newNames = [];
 
   for (const item of items) {
     const name = item.querySelector('input').value.trim();
     if (!name) continue;
     const id = item.dataset.id;
 
-    if (id && currentIds.has(id)) {
-      uiIds.add(id);
+    if (id) {
+      // 기존 카페 — 이름 수정
+      keptIds.add(id);
       await sb.from('cafes').update({ name }).eq('id', id);
     } else {
-      await sb.from('cafes').insert({ name, is_active: true });
+      // 신규 카페 — 나중에 insert
+      newNames.push(name);
     }
   }
 
-  // 목록에서 제거된 카페 비활성화
+  // 2) 화면에서 삭제된 기존 카페만 비활성화
   for (const cafe of gCafes) {
-    if (!uiIds.has(cafe.id)) {
+    if (!keptIds.has(cafe.id)) {
       await sb.from('cafes').update({ is_active: false }).eq('id', cafe.id);
     }
+  }
+
+  // 3) 신규 카페 insert (삭제 처리 완료 후)
+  for (const name of newNames) {
+    await sb.from('cafes').insert({ name, is_active: true });
   }
 }
 
