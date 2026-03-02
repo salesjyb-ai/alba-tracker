@@ -992,8 +992,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
       <div class="panel-hd">
         <div class="panel-title">전체 작업 기록</div>
         <div class="records-filters">
-          <select class="finput sel-account" id="recAccount" style="width:120px;padding:6px 10px;font-size:11px;" onchange="filterRecords()"><option value="all">전체 계정</option></select>
-          <select class="finput sel-cafe" id="recCafe" style="width:150px;padding:6px 10px;font-size:11px;" onchange="filterRecords()"><option value="all">전체 카페</option></select>
+          <select class="finput sel-account" id="recAccount" data-all="true" style="width:120px;padding:6px 10px;font-size:11px;" onchange="filterRecords()"></select>
+          <select class="finput sel-cafe" id="recCafe" data-all="true" style="width:150px;padding:6px 10px;font-size:11px;" onchange="filterRecords()"></select>
           <select class="finput" id="recType" style="width:100px;padding:6px 10px;font-size:11px;" onchange="filterRecords()"><option value="all">전체 유형</option><option value="post">게시물</option><option value="comment">댓글</option></select>
           <input type="date" class="finput" id="recDate" style="width:134px;padding:6px 10px;font-size:11px;" onchange="filterRecords()">
           <button class="btn btn-ghost" style="font-size:11px;padding:6px 10px;" onclick="resetRecordsFilter()">초기화</button>
@@ -1002,7 +1002,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
       </div>
       <div class="tbl-wrap" style="max-height:520px">
         <table>
-          <thead><tr><th>날짜</th><th>시간</th><th>계정</th><th>카페</th><th>유형</th><th>URL / 댓글수</th><th>금액</th></tr></thead>
+          <thead><tr><th>날짜</th><th>시간</th><th>계정</th><th>카페</th><th>유형</th><th>URL / 댓글수</th><th>금액</th><th></th></tr></thead>
           <tbody id="recordsTable"></tbody>
         </table>
       </div>
@@ -1625,13 +1625,31 @@ function renderGoals() {
 
 /* ===================== 모달 셀렉트 채우기 ===================== */
 function populateSelects() {
-  // 계정 옵션
-  const accOpts = gAccounts.map(a=>`<option value="${a.id}">${a.username}</option>`).join('');
-  document.querySelectorAll('.sel-account').forEach(el => el.innerHTML = accOpts);
+  // 현재 선택값 저장
+  const savedVals = {};
+  document.querySelectorAll('.sel-account, .sel-cafe').forEach(el => {
+    if (el.id) savedVals[el.id] = el.value;
+  });
 
-  // 카페 옵션
+  // 계정 옵션 — sel-account 중 data-all 있으면 "전체" 옵션 앞에 붙임
+  const accOpts = gAccounts.map(a=>`<option value="${a.id}">${a.username}</option>`).join('');
+  document.querySelectorAll('.sel-account').forEach(el => {
+    const hasAll = el.dataset.all === 'true';
+    el.innerHTML = (hasAll ? '<option value="all">전체 계정</option>' : '') + accOpts;
+  });
+
+  // 카페 옵션 — sel-cafe 중 data-all 있으면 "전체" 옵션 앞에 붙임
   const cafeOpts = gCafes.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-  document.querySelectorAll('.sel-cafe').forEach(el => el.innerHTML = cafeOpts);
+  document.querySelectorAll('.sel-cafe').forEach(el => {
+    const hasAll = el.dataset.all === 'true';
+    el.innerHTML = (hasAll ? '<option value="all">전체 카페</option>' : '') + cafeOpts;
+  });
+
+  // 선택값 복원
+  Object.entries(savedVals).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el && val) el.value = val;
+  });
 
   // 사이드바 계정 목록
   const sideAccEl = document.getElementById('sideAccounts');
@@ -1728,12 +1746,7 @@ async function saveQuick() {
   document.getElementById('qUrl') && (document.getElementById('qUrl').value = '');
   document.getElementById('qCommentCount') && (document.getElementById('qCommentCount').value = 1);
 
-  // loadAll 후 카페/계정 선택값 복원
   await loadAll();
-  const qAccEl  = document.getElementById('qAccount');
-  const qCafeEl = document.getElementById('qCafe');
-  if (qAccEl)  qAccEl.value  = accountId;
-  if (qCafeEl) qCafeEl.value = cafeId;
 }
 
 /* ===================== 숫자 자동 콤마 ===================== */
