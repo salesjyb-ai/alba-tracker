@@ -1321,8 +1321,18 @@ function getKSTISOStr(date = new Date()) {
 
 function getTodayStr() { return getKSTDateStr(); }
 
-function todayPosts()    { return gPosts.filter(p => p.worked_at.startsWith(getTodayStr())); }
-function todayComments() { return gComments.filter(c => c.worked_at.startsWith(getTodayStr())); }
+// worked_at이 '+09:00' 형식이든 'Z' 형식이든 KST 날짜로 정규화
+function getKSTDateFromWorkedAt(workedAt) {
+  if (!workedAt) return '';
+  // +09:00 형식이면 앞 10자리가 이미 KST 날짜
+  if (workedAt.includes('+09:00')) return workedAt.slice(0, 10);
+  // UTC(Z) 형식이면 +9시간 변환
+  const d = new Date(workedAt);
+  return getKSTDateStr(d);
+}
+
+function todayPosts()    { const t = getTodayStr(); return gPosts.filter(p => getKSTDateFromWorkedAt(p.worked_at) === t); }
+function todayComments() { const t = getTodayStr(); return gComments.filter(c => getKSTDateFromWorkedAt(c.worked_at) === t); }
 
 /* ===================== 대시보드 렌더 ===================== */
 function renderDashboard() {
@@ -1338,10 +1348,10 @@ function renderDashboard() {
   const weekStartStr = getKSTDateStr(new Date(new Date().getTime() + 9*60*60*1000 - nowKST.getDay()*86400000));
   const monthStartStr = todayKSTStr.slice(0,7) + '-01';
 
-  const weekEarn = gPosts.filter(p=>p.worked_at.slice(0,10)>=weekStartStr).reduce((s,p)=>s+p.amount,0)
-                 + gComments.filter(c=>c.worked_at.slice(0,10)>=weekStartStr).reduce((s,c)=>s+c.amount,0);
-  const monthEarn = gPosts.filter(p=>p.worked_at.slice(0,10)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
-                  + gComments.filter(c=>c.worked_at.slice(0,10)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
+  const weekEarn = gPosts.filter(p=>getKSTDateFromWorkedAt(p.worked_at)>=weekStartStr).reduce((s,p)=>s+p.amount,0)
+                 + gComments.filter(c=>getKSTDateFromWorkedAt(c.worked_at)>=weekStartStr).reduce((s,c)=>s+c.amount,0);
+  const monthEarn = gPosts.filter(p=>getKSTDateFromWorkedAt(p.worked_at)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
+                  + gComments.filter(c=>getKSTDateFromWorkedAt(c.worked_at)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
 
   const dailyGoal   = (gGoals.find(g=>g.type==='daily')?.amount)   || 30000;
   const weeklyGoal  = (gGoals.find(g=>g.type==='weekly')?.amount)  || 100000;
@@ -1522,12 +1532,12 @@ function renderCharts() {
   const accChartEl = document.getElementById('accBarChart');
   if (accChartEl) {
     const maxEarn = Math.max(...gAccounts.map(acc => {
-      return gPosts.filter(p=>p.account_id===acc.id&&p.worked_at.slice(0,10)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
-           + gComments.filter(c=>c.account_id===acc.id&&c.worked_at.slice(0,10)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
+      return gPosts.filter(p=>p.account_id===acc.id&&getKSTDateFromWorkedAt(p.worked_at)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
+           + gComments.filter(c=>c.account_id===acc.id&&getKSTDateFromWorkedAt(c.worked_at)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
     }), 1);
     accChartEl.innerHTML = gAccounts.map(acc => {
-      const earn = gPosts.filter(p=>p.account_id===acc.id&&p.worked_at.slice(0,10)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
-                 + gComments.filter(c=>c.account_id===acc.id&&c.worked_at.slice(0,10)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
+      const earn = gPosts.filter(p=>p.account_id===acc.id&&getKSTDateFromWorkedAt(p.worked_at)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
+                 + gComments.filter(c=>c.account_id===acc.id&&getKSTDateFromWorkedAt(c.worked_at)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
       const pct = Math.round(earn/maxEarn*100);
       return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
         <div class="bar-lbl" style="color:${acc.color}">${acc.username}</div>
@@ -1542,12 +1552,12 @@ function renderCharts() {
   const cafeChartEl = document.getElementById('cafeBarChart');
   if (cafeChartEl) {
     const maxCafe = Math.max(...gCafes.map(cafe => {
-      return gPosts.filter(p=>p.cafe_id===cafe.id&&p.worked_at.slice(0,10)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
-           + gComments.filter(c=>c.cafe_id===cafe.id&&c.worked_at.slice(0,10)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
+      return gPosts.filter(p=>p.cafe_id===cafe.id&&getKSTDateFromWorkedAt(p.worked_at)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
+           + gComments.filter(c=>c.cafe_id===cafe.id&&getKSTDateFromWorkedAt(c.worked_at)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
     }), 1);
     cafeChartEl.innerHTML = gCafes.map(cafe => {
-      const earn = gPosts.filter(p=>p.cafe_id===cafe.id&&p.worked_at.slice(0,10)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
-                 + gComments.filter(c=>c.cafe_id===cafe.id&&c.worked_at.slice(0,10)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
+      const earn = gPosts.filter(p=>p.cafe_id===cafe.id&&getKSTDateFromWorkedAt(p.worked_at)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
+                 + gComments.filter(c=>c.cafe_id===cafe.id&&getKSTDateFromWorkedAt(c.worked_at)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
       const pct = Math.round(earn/maxCafe*100);
       return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
         <div class="bar-lbl">☕ ${cafe.name}</div>
@@ -1566,12 +1576,12 @@ function renderGoals() {
   const weekStartStr = getKSTDateStr(new Date(new Date().getTime() + 9*60*60*1000 - nowKST.getDay()*86400000));
   const monthStartStr= todayStr.slice(0,7) + '-01';
 
-  const todayEarn  = gPosts.filter(p=>p.worked_at.slice(0,10)===todayStr).reduce((s,p)=>s+p.amount,0)
-                   + gComments.filter(c=>c.worked_at.slice(0,10)===todayStr).reduce((s,c)=>s+c.amount,0);
-  const weekEarn   = gPosts.filter(p=>p.worked_at.slice(0,10)>=weekStartStr).reduce((s,p)=>s+p.amount,0)
-                   + gComments.filter(c=>c.worked_at.slice(0,10)>=weekStartStr).reduce((s,c)=>s+c.amount,0);
-  const monthEarn  = gPosts.filter(p=>p.worked_at.slice(0,10)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
-                   + gComments.filter(c=>c.worked_at.slice(0,10)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
+  const todayEarn  = gPosts.filter(p=>getKSTDateFromWorkedAt(p.worked_at)===todayStr).reduce((s,p)=>s+p.amount,0)
+                   + gComments.filter(c=>getKSTDateFromWorkedAt(c.worked_at)===todayStr).reduce((s,c)=>s+c.amount,0);
+  const weekEarn   = gPosts.filter(p=>getKSTDateFromWorkedAt(p.worked_at)>=weekStartStr).reduce((s,p)=>s+p.amount,0)
+                   + gComments.filter(c=>getKSTDateFromWorkedAt(c.worked_at)>=weekStartStr).reduce((s,c)=>s+c.amount,0);
+  const monthEarn  = gPosts.filter(p=>getKSTDateFromWorkedAt(p.worked_at)>=monthStartStr).reduce((s,p)=>s+p.amount,0)
+                   + gComments.filter(c=>getKSTDateFromWorkedAt(c.worked_at)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
 
   const dailyGoal   = (gGoals.find(g=>g.type==='daily')?.amount)   || 30000;
   const weeklyGoal  = (gGoals.find(g=>g.type==='weekly')?.amount)  || 100000;
@@ -1664,7 +1674,7 @@ async function saveWork() {
   const cafeId     = document.getElementById('mCafe').value;
   const type       = document.getElementById('modalType').value;
   const dateVal    = document.getElementById('mDate').value;
-  const workedAt   = dateVal ? getKSTISOStr(new Date(dateVal)) : getKSTISOStr();
+  const workedAt   = dateVal ? `${dateVal}T09:00:00+09:00` : getKSTISOStr();
 
   const saveBtn = document.getElementById('saveWorkBtn');
   if (saveBtn) { saveBtn.textContent = '저장 중...'; saveBtn.disabled = true; }
@@ -1673,17 +1683,18 @@ async function saveWork() {
     const category = document.getElementById('mCategory').value;
     const url      = document.getElementById('mUrl').value || null;
     const memo     = document.getElementById('mMemo').value || null;
-    await sb.from('posts').insert({ account_id:accountId, cafe_id:cafeId, category, url, amount:200, memo, worked_at:workedAt });
+    const pricePost = (gGoals.find(g=>g.type==='price_post')?.amount) || 200;
+    await sb.from('posts').insert({ account_id:accountId, cafe_id:cafeId, category, url, amount:pricePost, memo, worked_at:workedAt });
   } else {
     const count = parseInt(document.getElementById('mCommentCount').value) || 1;
     const memo  = document.getElementById('mMemo').value || null;
-    await sb.from('comments').insert({ account_id:accountId, cafe_id:cafeId, count, unit_amount:20, memo, worked_at:workedAt });
+    const priceComment = (gGoals.find(g=>g.type==='price_comment')?.amount) || 20;
+    await sb.from('comments').insert({ account_id:accountId, cafe_id:cafeId, count, unit_amount:priceComment, amount:count*priceComment, memo, worked_at:workedAt });
   }
 
   if (saveBtn) { saveBtn.textContent = '저장하기'; saveBtn.disabled = false; }
   document.getElementById('addModal').classList.remove('open');
 
-  // 데이터 리로드
   await loadAll();
 }
 
@@ -1693,7 +1704,9 @@ async function saveQuick() {
   const cafeId    = document.getElementById('qCafe').value;
   const type      = document.getElementById('quickType').value;
   const dateVal   = document.getElementById('qDate').value;
-  const workedAt  = dateVal ? getKSTISOStr(new Date(dateVal)) : getKSTISOStr();
+
+  // KST 날짜 기준으로 저장 (날짜만 지정 시 당일 KST 자정 기준)
+  const workedAt  = dateVal ? `${dateVal}T09:00:00+09:00` : getKSTISOStr();
 
   const btn = document.getElementById('saveQuickBtn');
   if (btn) { btn.textContent = '저장 중...'; btn.disabled = true; }
@@ -1701,18 +1714,26 @@ async function saveQuick() {
   if (type === 'post') {
     const category = document.getElementById('qCategory').value;
     const url      = document.getElementById('qUrl').value || null;
-    await sb.from('posts').insert({ account_id:accountId, cafe_id:cafeId, category, url, amount:200, worked_at:workedAt });
+    const pricePost = (gGoals.find(g=>g.type==='price_post')?.amount) || 200;
+    await sb.from('posts').insert({ account_id:accountId, cafe_id:cafeId, category, url, amount:pricePost, worked_at:workedAt });
   } else {
     const count = parseInt(document.getElementById('qCommentCount').value) || 1;
-    await sb.from('comments').insert({ account_id:accountId, cafe_id:cafeId, count, unit_amount:20, worked_at:workedAt });
+    const priceComment = (gGoals.find(g=>g.type==='price_comment')?.amount) || 20;
+    await sb.from('comments').insert({ account_id:accountId, cafe_id:cafeId, count, unit_amount:priceComment, amount:count*priceComment, worked_at:workedAt });
   }
 
-  if (btn) { btn.textContent = '+ 저장', btn.disabled = false; }
-  // 입력 초기화
+  if (btn) { btn.textContent = '+ 저장'; btn.disabled = false; }
+
+  // 입력 초기화 (계정/카페 선택값은 유지)
   document.getElementById('qUrl') && (document.getElementById('qUrl').value = '');
   document.getElementById('qCommentCount') && (document.getElementById('qCommentCount').value = 1);
 
+  // loadAll 후 카페/계정 선택값 복원
   await loadAll();
+  const qAccEl  = document.getElementById('qAccount');
+  const qCafeEl = document.getElementById('qCafe');
+  if (qAccEl)  qAccEl.value  = accountId;
+  if (qCafeEl) qCafeEl.value = cafeId;
 }
 
 /* ===================== 숫자 자동 콤마 ===================== */
@@ -1969,9 +1990,10 @@ function buildCalForMonth(year, month) {
 
   const dayEarnings={}, dayPosts={}, dayComments={};
   [...gPosts,...gComments].forEach(item=>{
-    const d=new Date(item.worked_at);
-    if(d.getFullYear()===year&&d.getMonth()===month){
-      const day=d.getDate();
+    const dStr=getKSTDateFromWorkedAt(item.worked_at);
+    const [dy,dm,dd]=dStr.split('-').map(Number);
+    if(dy===year&&(dm-1)===month){
+      const day=dd;
       dayEarnings[day]=(dayEarnings[day]||0)+item.amount;
       if(item.category!==undefined) dayPosts[day]=(dayPosts[day]||0)+1;
       else dayComments[day]=(dayComments[day]||0)+(item.count||1);
@@ -1994,7 +2016,7 @@ function buildCalForMonth(year, month) {
   const totalCells=firstDay+daysInMonth;const rem=totalCells%7===0?0:7-(totalCells%7);
   for(let i=1;i<=rem;i++){const d=document.createElement('div');d.className='cal-day other-month';d.innerHTML=`<div class="cal-day-num">${i}</div>`;container.appendChild(d);}
 
-  const monthTotal=[...gPosts,...gComments].filter(i=>{const d=new Date(i.worked_at);return d.getFullYear()===year&&d.getMonth()===month;}).reduce((s,i)=>s+i.amount,0);
+  const monthTotal=[...gPosts,...gComments].filter(i=>{const s=getKSTDateFromWorkedAt(i.worked_at);const [y,m]=s.split('-').map(Number);return y===year&&(m-1)===month;}).reduce((s,i)=>s+i.amount,0);
   const calTotalEl=document.getElementById('calMonthTotal');
   if(calTotalEl) calTotalEl.textContent=monthTotal.toLocaleString()+'원';
 }
@@ -2012,8 +2034,8 @@ function showDayDetail(year, month, day) {
   if (selectedEl) selectedEl.classList.add('selected-day');
 
   // 해당 날짜 데이터 필터
-  const posts    = gPosts.filter(p => p.worked_at.slice(0,10) === dateStr);
-  const comments = gComments.filter(c => c.worked_at.slice(0,10) === dateStr);
+  const posts    = gPosts.filter(p => getKSTDateFromWorkedAt(p.worked_at) === dateStr);
+  const comments = gComments.filter(c => getKSTDateFromWorkedAt(c.worked_at) === dateStr);
   const total    = [...posts,...comments].reduce((s,i)=>s+i.amount,0);
 
   title.innerHTML = `📅 ${year}년 ${month+1}월 ${day}일 <span style="font-family:var(--font-mono);font-size:13px;color:var(--green);margin-left:8px;">+${total.toLocaleString()}원</span>`;
