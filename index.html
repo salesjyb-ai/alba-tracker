@@ -1314,10 +1314,9 @@ function getKSTDateStr(date = new Date()) {
   return kst.toISOString().split('T')[0];
 }
 
-/* KST 기준 현재 시각 ISO 문자열 */
+/* KST 기준 현재 시각 ISO 문자열 (UTC로 변환해서 반환 - Supabase 호환) */
 function getKSTISOStr(date = new Date()) {
-  const kst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
-  return kst.toISOString().replace('Z', '+09:00');
+  return date.toISOString();
 }
 
 function getTodayStr() { return getKSTDateStr(); }
@@ -1696,7 +1695,7 @@ async function saveWork() {
   const cafeId     = document.getElementById('mCafe').value;
   const type       = document.getElementById('modalType').value;
   const dateVal    = document.getElementById('mDate').value;
-  const workedAt   = dateVal ? `${dateVal}T09:00:00+09:00` : getKSTISOStr();
+  const workedAt   = dateVal ? new Date(`${dateVal}T12:00:00+09:00`).toISOString() : getKSTISOStr();
 
   const saveBtn = document.getElementById('saveWorkBtn');
   if (saveBtn) { saveBtn.textContent = '저장 중...'; saveBtn.disabled = true; }
@@ -1727,8 +1726,8 @@ async function saveQuick() {
   const type      = document.getElementById('quickType').value;
   const dateVal   = document.getElementById('qDate').value;
 
-  // KST 날짜 기준으로 저장 (날짜만 지정 시 당일 KST 자정 기준)
-  const workedAt  = dateVal ? `${dateVal}T09:00:00+09:00` : getKSTISOStr();
+  // 날짜 지정 시 해당 날 KST 정오(12:00 KST = 03:00 UTC)로 저장, 미지정 시 현재 시각
+  const workedAt = dateVal ? new Date(`${dateVal}T12:00:00+09:00`).toISOString() : getKSTISOStr();
 
   const btn = document.getElementById('saveQuickBtn');
   if (btn) { btn.textContent = '저장 중...'; btn.disabled = true; }
