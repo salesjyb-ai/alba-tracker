@@ -1713,7 +1713,7 @@ async function saveWork() {
       const count = parseInt(rawCount) || 1;
       const memo  = document.getElementById('mMemo').value || null;
       const priceComment = (gGoals.find(g=>g.type==='price_comment')?.amount) || 20;
-      result = await sb.from('comments').insert({ account_id:accountId, cafe_id:cafeId, count, unit_amount:priceComment, amount:count*priceComment, memo, worked_at:workedAt });
+      result = await sb.from('comments').insert({ account_id:accountId, cafe_id:cafeId, count, unit_amount:priceComment, memo, worked_at:workedAt });
     }
 
     if (result.error) {
@@ -1759,20 +1759,18 @@ async function saveQuick() {
       const rawCount = document.getElementById('qCommentCount').value.replace(/,/g, '');
       const count = parseInt(rawCount) || 1;
       const priceComment = (gGoals.find(g=>g.type==='price_comment')?.amount) || 20;
-      result = await sb.from('comments').insert({ account_id:accountId, cafe_id:cafeId, count, unit_amount:priceComment, amount:count*priceComment, worked_at:workedAt });
+      result = await sb.from('comments').insert({ account_id:accountId, cafe_id:cafeId, count, unit_amount:priceComment, worked_at:workedAt });
     }
 
     if (result.error) {
-      alert('저장 실패: ' + result.error.message);
-      console.error('Supabase error:', result.error);
+      alert('❌ 저장 실패: ' + result.error.message);
     } else {
       document.getElementById('qUrl') && (document.getElementById('qUrl').value = '');
       document.getElementById('qCommentCount') && (document.getElementById('qCommentCount').value = 1);
       await loadAll();
     }
   } catch(e) {
-    alert('저장 중 오류: ' + e.message);
-    console.error(e);
+    alert('❌ 오류: ' + e.message);
   }
 
   if (btn) { btn.textContent = '+ 저장'; btn.disabled = false; }
