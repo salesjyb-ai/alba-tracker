@@ -1700,23 +1700,35 @@ async function saveWork() {
   const saveBtn = document.getElementById('saveWorkBtn');
   if (saveBtn) { saveBtn.textContent = '저장 중...'; saveBtn.disabled = true; }
 
-  if (type === 'post') {
-    const category = document.getElementById('mCategory').value;
-    const url      = document.getElementById('mUrl').value || null;
-    const memo     = document.getElementById('mMemo').value || null;
-    const pricePost = (gGoals.find(g=>g.type==='price_post')?.amount) || 200;
-    await sb.from('posts').insert({ account_id:accountId, cafe_id:cafeId, category, url, amount:pricePost, memo, worked_at:workedAt });
-  } else {
-    const count = parseInt(document.getElementById('mCommentCount').value) || 1;
-    const memo  = document.getElementById('mMemo').value || null;
-    const priceComment = (gGoals.find(g=>g.type==='price_comment')?.amount) || 20;
-    await sb.from('comments').insert({ account_id:accountId, cafe_id:cafeId, count, unit_amount:priceComment, amount:count*priceComment, memo, worked_at:workedAt });
+  try {
+    let result;
+    if (type === 'post') {
+      const category = document.getElementById('mCategory').value;
+      const url      = document.getElementById('mUrl').value || null;
+      const memo     = document.getElementById('mMemo').value || null;
+      const pricePost = (gGoals.find(g=>g.type==='price_post')?.amount) || 200;
+      result = await sb.from('posts').insert({ account_id:accountId, cafe_id:cafeId, category, url, amount:pricePost, memo, worked_at:workedAt });
+    } else {
+      const rawCount = document.getElementById('mCommentCount').value.replace(/,/g, '');
+      const count = parseInt(rawCount) || 1;
+      const memo  = document.getElementById('mMemo').value || null;
+      const priceComment = (gGoals.find(g=>g.type==='price_comment')?.amount) || 20;
+      result = await sb.from('comments').insert({ account_id:accountId, cafe_id:cafeId, count, unit_amount:priceComment, amount:count*priceComment, memo, worked_at:workedAt });
+    }
+
+    if (result.error) {
+      alert('저장 실패: ' + result.error.message);
+      console.error('Supabase error:', result.error);
+    } else {
+      document.getElementById('addModal').classList.remove('open');
+      await loadAll();
+    }
+  } catch(e) {
+    alert('저장 중 오류: ' + e.message);
+    console.error(e);
   }
 
   if (saveBtn) { saveBtn.textContent = '저장하기'; saveBtn.disabled = false; }
-  document.getElementById('addModal').classList.remove('open');
-
-  await loadAll();
 }
 
 /* ===================== 빠른 입력 저장 ===================== */
@@ -1726,30 +1738,44 @@ async function saveQuick() {
   const type      = document.getElementById('quickType').value;
   const dateVal   = document.getElementById('qDate').value;
 
-  // 날짜 지정 시 해당 날 KST 정오(12:00 KST = 03:00 UTC)로 저장, 미지정 시 현재 시각
+  if (!accountId || !cafeId) {
+    alert('계정과 카페를 선택해주세요.');
+    return;
+  }
+
   const workedAt = dateVal ? new Date(`${dateVal}T12:00:00+09:00`).toISOString() : getKSTISOStr();
 
   const btn = document.getElementById('saveQuickBtn');
   if (btn) { btn.textContent = '저장 중...'; btn.disabled = true; }
 
-  if (type === 'post') {
-    const category = document.getElementById('qCategory').value;
-    const url      = document.getElementById('qUrl').value || null;
-    const pricePost = (gGoals.find(g=>g.type==='price_post')?.amount) || 200;
-    await sb.from('posts').insert({ account_id:accountId, cafe_id:cafeId, category, url, amount:pricePost, worked_at:workedAt });
-  } else {
-    const count = parseInt(document.getElementById('qCommentCount').value) || 1;
-    const priceComment = (gGoals.find(g=>g.type==='price_comment')?.amount) || 20;
-    await sb.from('comments').insert({ account_id:accountId, cafe_id:cafeId, count, unit_amount:priceComment, amount:count*priceComment, worked_at:workedAt });
+  try {
+    let result;
+    if (type === 'post') {
+      const category = document.getElementById('qCategory').value;
+      const url      = document.getElementById('qUrl').value || null;
+      const pricePost = (gGoals.find(g=>g.type==='price_post')?.amount) || 200;
+      result = await sb.from('posts').insert({ account_id:accountId, cafe_id:cafeId, category, url, amount:pricePost, worked_at:workedAt });
+    } else {
+      const rawCount = document.getElementById('qCommentCount').value.replace(/,/g, '');
+      const count = parseInt(rawCount) || 1;
+      const priceComment = (gGoals.find(g=>g.type==='price_comment')?.amount) || 20;
+      result = await sb.from('comments').insert({ account_id:accountId, cafe_id:cafeId, count, unit_amount:priceComment, amount:count*priceComment, worked_at:workedAt });
+    }
+
+    if (result.error) {
+      alert('저장 실패: ' + result.error.message);
+      console.error('Supabase error:', result.error);
+    } else {
+      document.getElementById('qUrl') && (document.getElementById('qUrl').value = '');
+      document.getElementById('qCommentCount') && (document.getElementById('qCommentCount').value = 1);
+      await loadAll();
+    }
+  } catch(e) {
+    alert('저장 중 오류: ' + e.message);
+    console.error(e);
   }
 
   if (btn) { btn.textContent = '+ 저장'; btn.disabled = false; }
-
-  // 입력 초기화 (계정/카페 선택값은 유지)
-  document.getElementById('qUrl') && (document.getElementById('qUrl').value = '');
-  document.getElementById('qCommentCount') && (document.getElementById('qCommentCount').value = 1);
-
-  await loadAll();
 }
 
 /* ===================== 숫자 자동 콤마 ===================== */
