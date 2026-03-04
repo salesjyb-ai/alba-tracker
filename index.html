@@ -490,6 +490,10 @@ body.edit-mode .row-del { display: inline-flex; }
   font-family: var(--font-body); outline: none; transition: border-color 0.15s; appearance: none;
 }
 .finput:focus { border-color: var(--accent); }
+input[type="date"].finput {
+  appearance: auto;
+  color-scheme: dark;
+}
 .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .save-btn {
   width: 100%; background: var(--accent); color: #fff; border: none; padding: 10px;
@@ -2511,5 +2515,3 @@ function showSaved(fnName) {
 </script>
 </body>
 </html>
-< ! - -   f o r c e   d e p l o y   - - >  
- 
