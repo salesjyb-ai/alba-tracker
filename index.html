@@ -926,10 +926,15 @@ input[type="range"]::-webkit-slider-thumb:hover {
       <div class="panel">
         <div class="panel-hd">
           <div class="panel-title editable" id="edit-tbl-title">오늘 작업 목록</div>
-          <div class="filter-tabs">
-            <div class="ftab active" onclick="filterDashTable('all',this)">전체</div>
-            <div class="ftab" onclick="filterDashTable('post',this)">게시물</div>
-            <div class="ftab" onclick="filterDashTable('comment',this)">댓글</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <div class="filter-tabs" id="dashTypeTabs">
+              <div class="ftab active" onclick="filterDashTable('all',this,'type')">전체</div>
+              <div class="ftab" onclick="filterDashTable('post',this,'type')">게시물</div>
+              <div class="ftab" onclick="filterDashTable('comment',this,'type')">댓글</div>
+            </div>
+            <div class="filter-tabs" id="dashAccTabs">
+              <div class="ftab active" onclick="filterDashTable('all',this,'acc')">전체 계정</div>
+            </div>
           </div>
         </div>
         <div class="tbl-wrap">
@@ -1404,6 +1409,7 @@ function renderDashboard() {
   if (pMonthPct) pMonthPct.textContent = monthlyPct + '%';
 
   // 작업 테이블
+  buildDashAccTabs();
   renderWorkTable(tp, tc);
 
   // 계정별 현황
@@ -1957,10 +1963,29 @@ function filterTable(type, el) {
     tr.style.display = (type==='all'||tr.dataset.type===type) ? '' : 'none';
   });
 }
-function filterDashTable(type, el) {
+let dashFilterType = 'all';
+let dashFilterAcc  = 'all';
+
+function filterDashTable(val, el, kind) {
   el.closest('.filter-tabs').querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-  renderWorkTable(todayPosts(), todayComments(), type);
+  if (kind === 'type') dashFilterType = val;
+  else                 dashFilterAcc  = val;
+
+  let tp = todayPosts();
+  let tc = todayComments();
+  if (dashFilterAcc !== 'all') {
+    tp = tp.filter(p => p.account_id === dashFilterAcc);
+    tc = tc.filter(c => c.account_id === dashFilterAcc);
+  }
+  renderWorkTable(tp, tc, dashFilterType);
+}
+
+function buildDashAccTabs() {
+  const container = document.getElementById('dashAccTabs');
+  if (!container) return;
+  container.innerHTML = `<div class="ftab ${dashFilterAcc==='all'?'active':''}" onclick="filterDashTable('all',this,'acc')">전체</div>`
+    + gAccounts.map(a => `<div class="ftab ${dashFilterAcc===a.id?'active':''}" style="${dashFilterAcc===a.id?'':''}color:inherit" onclick="filterDashTable('${a.id}',this,'acc')">${a.username}</div>`).join('');
 }
 function delRow(btn) { btn.closest('tr').remove(); }
 
