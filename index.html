@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>카페 ?�바 ?�래�?v5</title>
+<title>카페 알바 트래커 v5</title>
 <!-- Inter from Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
 <!-- Satoshi from Fontshare CDN -->
@@ -12,20 +12,20 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* ========================================
-   FONT SIZE SCALE ??CSS Variables
-   ?�집 ?�정?�서 ?�라?�더�??�유 조정
+   FONT SIZE SCALE — CSS Variables
+   편집 설정에서 슬라이더로 자유 조정
 ======================================== */
 :root {
   --tr: 0.2s ease;
 
-  /* ?�?� Headline font ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?� */
+  /* ── Headline font ──────────────── */
   --font-headline: 'Satoshi', 'Inter', 'Noto Sans KR', sans-serif;
-  /* ?�?� Body / UI font ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?� */
+  /* ── Body / UI font ─────────────── */
   --font-body: 'Inter', 'Noto Sans KR', sans-serif;
-  /* ?�?� Mono font ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?� */
+  /* ── Mono font ──────────────────── */
   --font-mono: 'Inter', monospace;
 
-  /* ?�?� Font size scale (rem) ?�?�?�?�?�?�?�?� */
+  /* ── Font size scale (rem) ──────── */
   --fs-xs:   0.6875rem;   /* 11px */
   --fs-sm:   0.75rem;     /* 12px */
   --fs-base: 0.8125rem;   /* 13px */
@@ -37,7 +37,7 @@
   --fs-4xl:  2rem;        /* 32px */
   --fs-5xl:  2.125rem;    /* 34px */
 
-  /* ?�?� Scale multiplier (JS�?조정) ?�?� */
+  /* ── Scale multiplier (JS로 조정) ── */
   --font-scale: 1;
 }
 
@@ -445,11 +445,11 @@ tbody tr:last-child td { border-bottom: none; }
 
 .tbadge { display: inline-block; font-size: calc(var(--fs-xs) * var(--font-scale)); padding: 2px 8px; border-radius: 4px; background: var(--surface3); color: var(--text2); font-weight: 600; }
 .tbadge.출석{background:rgba(139,124,248,0.1);color:var(--accent);}
-.tbadge.?�머{background:rgba(244,114,182,0.1);color:var(--pink);}
-.tbadge.?�동�?background:rgba(52,211,153,0.1);color:var(--green);}
-.tbadge.?�상{background:rgba(251,146,60,0.1);color:var(--orange);}
-.tbadge.?�원{background:rgba(34,211,238,0.1);color:var(--cyan);}
-.tbadge.?��?{background:rgba(251,191,36,0.1);color:var(--yellow);}
+.tbadge.유머{background:rgba(244,114,182,0.1);color:var(--pink);}
+.tbadge.자동차{background:rgba(52,211,153,0.1);color:var(--green);}
+.tbadge.일상{background:rgba(251,146,60,0.1);color:var(--orange);}
+.tbadge.응원{background:rgba(34,211,238,0.1);color:var(--cyan);}
+.tbadge.댓글{background:rgba(251,191,36,0.1);color:var(--yellow);}
 
 .cafe-tag {
   display: inline-flex; align-items: center; gap: 3px;
@@ -800,8 +800,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 <!-- EDIT BANNER -->
 <div class="edit-banner">
-  <span class="edit-banner-txt">?�️ EDIT MODE ???��? ?�두�???��???�릭?�여 직접 ?�정</span>
-  <button class="edit-done-btn" onclick="toggleEditMode()">???�료</button>
+  <span class="edit-banner-txt">✏️ EDIT MODE — 노란 테두리 항목을 클릭하여 직접 수정</span>
+  <button class="edit-done-btn" onclick="toggleEditMode()">✓ 완료</button>
 </div>
 
 <div class="app">
@@ -810,18 +810,18 @@ input[type="range"]::-webkit-slider-thumb:hover {
 <aside class="sidebar">
   <div class="logo">
     <div class="logo-eyebrow"><span class="editable" id="edit-eyebrow">NAVER CAFE</span></div>
-    <div class="logo-name"><span class="editable" id="edit-appname">?�바 ?�래�?/span></div>
-    <div class="logo-sub"><span class="editable" id="edit-appsub">?�업 관�?& ?�익 ?�황</span></div>
+    <div class="logo-name"><span class="editable" id="edit-appname">알바 트래커</span></div>
+    <div class="logo-sub"><span class="editable" id="edit-appsub">작업 관리 & 수익 현황</span></div>
   </div>
 
   <nav class="sidebar-nav">
     <div class="nav-group-label">메뉴</div>
-    <div class="nav-item active" onclick="switchView('dashboard',this)"><span class="nav-icon">?��</span><span class="nav-label editable" id="edit-nav-dashboard">?�?�보??/span></div>
-    <div class="nav-item" onclick="switchView('records',this)"><span class="nav-icon">?��</span><span class="nav-label editable" id="edit-nav-records">?�업 기록</span></div>
-    <div class="nav-item" onclick="switchView('calendar',this)"><span class="nav-icon">?��</span><span class="nav-label editable" id="edit-nav-calendar">?�력 �?/span></div>
-    <div class="nav-item" onclick="switchView('charts',this)"><span class="nav-icon">?��</span><span class="nav-label editable" id="edit-nav-charts">?�계 차트</span></div>
-    <div class="nav-item" onclick="switchView('goals',this)"><span class="nav-icon">?��</span><span class="nav-label editable" id="edit-nav-goals">목표 & ?�성�?/span></div>
-    <div class="nav-item" onclick="switchView('settings',this)"><span class="nav-icon">?�️</span><span class="nav-label editable" id="edit-nav-settings">?�집 ?�정</span></div>
+    <div class="nav-item active" onclick="switchView('dashboard',this)"><span class="nav-icon">📊</span><span class="nav-label editable" id="edit-nav-dashboard">대시보드</span></div>
+    <div class="nav-item" onclick="switchView('records',this)"><span class="nav-icon">📝</span><span class="nav-label editable" id="edit-nav-records">작업 기록</span></div>
+    <div class="nav-item" onclick="switchView('calendar',this)"><span class="nav-icon">📅</span><span class="nav-label editable" id="edit-nav-calendar">달력 뷰</span></div>
+    <div class="nav-item" onclick="switchView('charts',this)"><span class="nav-icon">📈</span><span class="nav-label editable" id="edit-nav-charts">통계 차트</span></div>
+    <div class="nav-item" onclick="switchView('goals',this)"><span class="nav-icon">🎯</span><span class="nav-label editable" id="edit-nav-goals">목표 & 달성률</span></div>
+    <div class="nav-item" onclick="switchView('settings',this)"><span class="nav-icon">⚙️</span><span class="nav-label editable" id="edit-nav-settings">편집 설정</span></div>
 
     <div class="nav-group-label" style="margin-top:10px">계정</div>
     <div class="account-items" id="sideAccounts"></div>
@@ -829,8 +829,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
   <div class="sidebar-footer">
     <div class="theme-toggle" onclick="toggleTheme()">
-      <div class="theme-btn active" id="btn-dark">?��</div>
-      <div class="theme-btn" id="btn-light">?��?/div>
+      <div class="theme-btn active" id="btn-dark">🌙</div>
+      <div class="theme-btn" id="btn-light">☀️</div>
     </div>
     <span class="ver-tag">v6.0</span>
   </div>
@@ -841,26 +841,26 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
   <div class="topbar">
     <div>
-      <div class="page-title editable" id="edit-page-title">?�?�보??/div>
+      <div class="page-title editable" id="edit-page-title">대시보드</div>
       <div class="page-date" id="pageDate"></div>
     </div>
     <div class="topbar-right">
       <div class="live-badge"><div class="live-dot"></div>LIVE</div>
-      <button class="btn btn-edit" id="editToggleBtn" onclick="toggleEditMode()">?�️ ?�집</button>
-      <button class="btn btn-ghost" onclick="document.getElementById('exportModal').classList.add('open')">�??�보?�기</button>
-      <button id="saveAllBtn" style="display:none;align-items:center;gap:6px;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;transition:0.2s" onclick="saveAllSettings()">?�� ?�??/button>
-      <button class="btn btn-primary" onclick="document.getElementById('addModal').classList.add('open')">�??�업 추�?</button>
+      <button class="btn btn-edit" id="editToggleBtn" onclick="toggleEditMode()">✏️ 편집</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('exportModal').classList.add('open')">⬇ 내보내기</button>
+      <button id="saveAllBtn" style="display:none;align-items:center;gap:6px;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;transition:0.2s" onclick="saveAllSettings()">💾 저장</button>
+      <button class="btn btn-primary" onclick="document.getElementById('addModal').classList.add('open')">＋ 작업 추가</button>
     </div>
   </div>
 
   <!-- View tabs -->
   <div class="view-tabs">
-    <div class="vtab active" onclick="switchView('dashboard',null,this)">?�� <span id="vt-dashboard">?�?�보??/span></div>
-    <div class="vtab" onclick="switchView('records',null,this)">?�� <span id="vt-records">기록</span></div>
-    <div class="vtab" onclick="switchView('calendar',null,this)">?�� <span id="vt-calendar">?�력</span></div>
-    <div class="vtab" onclick="switchView('charts',null,this)">?�� <span id="vt-charts">차트</span></div>
-    <div class="vtab" onclick="switchView('goals',null,this)">?�� <span id="vt-goals">목표</span></div>
-    <div class="vtab" onclick="switchView('settings',null,this)">?�️ ?�정</div>
+    <div class="vtab active" onclick="switchView('dashboard',null,this)">📊 <span id="vt-dashboard">대시보드</span></div>
+    <div class="vtab" onclick="switchView('records',null,this)">📝 <span id="vt-records">기록</span></div>
+    <div class="vtab" onclick="switchView('calendar',null,this)">📅 <span id="vt-calendar">달력</span></div>
+    <div class="vtab" onclick="switchView('charts',null,this)">📈 <span id="vt-charts">차트</span></div>
+    <div class="vtab" onclick="switchView('goals',null,this)">🎯 <span id="vt-goals">목표</span></div>
+    <div class="vtab" onclick="switchView('settings',null,this)">⚙️ 설정</div>
   </div>
 
   <!-- ============ DASHBOARD ============ -->
@@ -871,53 +871,53 @@ input[type="range"]::-webkit-slider-thumb:hover {
       <!-- TODAY -->
       <div class="earn-card today" data-wm="TODAY">
         <div class="earn-label">
-          <span class="editable" id="edit-lbl-today">?�늘 ?�익</span>
+          <span class="editable" id="edit-lbl-today">오늘 수익</span>
         </div>
-        <div class="earn-amount" id="todayAmount">0??/div>
-        <div class="earn-breakdown">?�시�?Supabase ?�동</div>
+        <div class="earn-amount" id="todayAmount">0원</div>
+        <div class="earn-breakdown">실시간 Supabase 연동</div>
         <div class="reset-row">
-          <span class="reset-chip day">?�� ?�정 초기??· <span id="cdDay">--:--:--</span></span>
+          <span class="reset-chip day">🔄 자정 초기화 · <span id="cdDay">--:--:--</span></span>
         </div>
-        <div class="goal-row"><span class="goal-lbl">??목표</span><span class="goal-pct" id="progDayPct">0%</span></div>
+        <div class="goal-row"><span class="goal-lbl">일 목표</span><span class="goal-pct" id="progDayPct">0%</span></div>
         <div class="goal-bar"><div class="goal-fill gf-a" id="progDay" style="width:0%"></div></div>
       </div>
 
       <!-- WEEK -->
       <div class="earn-card week" data-wm="WEEK">
         <div class="earn-label">
-          <span class="editable" id="edit-lbl-week">?�번 �??�익</span>
+          <span class="editable" id="edit-lbl-week">이번 주 수익</span>
         </div>
-        <div class="earn-amount" id="weekAmount">0??/div>
-        <div class="earn-breakdown">?�요???�정 초기??/div>
+        <div class="earn-amount" id="weekAmount">0원</div>
+        <div class="earn-breakdown">일요일 자정 초기화</div>
         <div class="reset-row">
-          <span class="reset-chip week">?�� ?�요???�정 초기??· <span id="cdWeek">--????/span></span>
+          <span class="reset-chip week">🔄 일요일 자정 초기화 · <span id="cdWeek">--일 후</span></span>
         </div>
-        <div class="goal-row"><span class="goal-lbl">�?목표</span><span class="goal-pct" id="progWeekPct">0%</span></div>
+        <div class="goal-row"><span class="goal-lbl">주 목표</span><span class="goal-pct" id="progWeekPct">0%</span></div>
         <div class="goal-bar"><div class="goal-fill gf-p" id="progWeek" style="width:0%"></div></div>
       </div>
 
       <!-- MONTH -->
       <div class="earn-card month" data-wm="MONTH">
         <div class="earn-label">
-          <span class="editable" id="edit-lbl-month">?�번 ???�익</span>
+          <span class="editable" id="edit-lbl-month">이번 달 수익</span>
         </div>
-        <div class="earn-amount" id="monthAmount">0??/div>
-        <div class="earn-breakdown">?�말 ?�정 초기??/div>
+        <div class="earn-amount" id="monthAmount">0원</div>
+        <div class="earn-breakdown">월말 자정 초기화</div>
         <div class="reset-row">
-          <span class="reset-chip month">?�� ?�말 ?�정 초기??· <span id="cdMonth">--????/span></span>
+          <span class="reset-chip month">🔄 월말 자정 초기화 · <span id="cdMonth">--일 후</span></span>
         </div>
-        <div class="goal-row"><span class="goal-lbl">??목표</span><span class="goal-pct" id="progMonthPct">0%</span></div>
+        <div class="goal-row"><span class="goal-lbl">월 목표</span><span class="goal-pct" id="progMonthPct">0%</span></div>
         <div class="goal-bar"><div class="goal-fill gf-g" id="progMonth" style="width:0%"></div></div>
       </div>
     </div>
 
     <!-- Stats -->
     <div class="stats-row">
-      <div class="stat-card"><div class="stat-icon si-p">?��</div><div><div class="stat-val" id="statTodayPosts">0�?/div><div class="stat-lbl">?�늘 게시�?/div></div></div>
-      <div class="stat-card"><div class="stat-icon si-k">?��</div><div><div class="stat-val" id="statTodayComments">0�?/div><div class="stat-lbl">?�늘 ?��?</div></div></div>
-      <div class="stat-card"><div class="stat-icon si-g">?��</div><div><div class="stat-val" id="statTodayEarn">0??/div><div class="stat-lbl">?�늘 ?�익</div></div></div>
-      <div class="stat-card"><div class="stat-icon si-o">?��</div><div><div class="stat-val" id="statAccounts">3�?/div><div class="stat-lbl">?�성 계정</div></div></div>
-      <div class="stat-card"><div class="stat-icon si-y">??/div><div><div class="stat-val" id="statCafes">5�?/div><div class="stat-lbl">?�록 카페</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-p">📄</div><div><div class="stat-val" id="statTodayPosts">0개</div><div class="stat-lbl">오늘 게시물</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-k">💬</div><div><div class="stat-val" id="statTodayComments">0개</div><div class="stat-lbl">오늘 댓글</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-g">🏆</div><div><div class="stat-val" id="statTodayEarn">0원</div><div class="stat-lbl">오늘 수익</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-o">📅</div><div><div class="stat-val" id="statAccounts">3개</div><div class="stat-lbl">활성 계정</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-y">☕</div><div><div class="stat-val" id="statCafes">5개</div><div class="stat-lbl">등록 카페</div></div></div>
     </div>
 
     <!-- Content -->
@@ -925,21 +925,21 @@ input[type="range"]::-webkit-slider-thumb:hover {
       <!-- Table -->
       <div class="panel">
         <div class="panel-hd">
-          <div class="panel-title editable" id="edit-tbl-title">?�늘 ?�업 목록</div>
+          <div class="panel-title editable" id="edit-tbl-title">오늘 작업 목록</div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <div class="filter-tabs" id="dashTypeTabs">
-              <div class="ftab active" onclick="filterDashTable('all',this,'type')">?�체</div>
-              <div class="ftab" onclick="filterDashTable('post',this,'type')">게시�?/div>
-              <div class="ftab" onclick="filterDashTable('comment',this,'type')">?��?</div>
+              <div class="ftab active" onclick="filterDashTable('all',this,'type')">전체</div>
+              <div class="ftab" onclick="filterDashTable('post',this,'type')">게시물</div>
+              <div class="ftab" onclick="filterDashTable('comment',this,'type')">댓글</div>
             </div>
             <div class="filter-tabs" id="dashAccTabs">
-              <div class="ftab active" onclick="filterDashTable('all',this,'acc')">?�체 계정</div>
+              <div class="ftab active" onclick="filterDashTable('all',this,'acc')">전체 계정</div>
             </div>
           </div>
         </div>
         <div class="tbl-wrap">
           <table>
-            <thead><tr><th>?�간</th><th>계정</th><th>카페</th><th>?�형</th><th>URL</th><th>금액</th></tr></thead>
+            <thead><tr><th>시간</th><th>계정</th><th>카페</th><th>유형</th><th>URL</th><th>금액</th></tr></thead>
             <tbody id="workTable"></tbody>
           </table>
         </div>
@@ -949,42 +949,42 @@ input[type="range"]::-webkit-slider-thumb:hover {
       <div class="right-col">
         <!-- Quick input -->
         <div class="form-panel">
-          <div class="form-title">??<span class="editable" id="edit-form-title">빠른 ?�력</span></div>
+          <div class="form-title">⚡ <span class="editable" id="edit-form-title">빠른 입력</span></div>
           <div class="frow">
             <div class="fgroup"><label>계정</label>
               <select class="finput sel-account" id="qAccount"></select>
             </div>
-            <div class="fgroup"><label>?�짜</label><input type="date" class="finput" id="qDate"></div>
+            <div class="fgroup"><label>날짜</label><input type="date" class="finput" id="qDate"></div>
           </div>
           <div class="fgroup"><label>카페</label>
             <select class="finput sel-cafe" id="qCafe"></select>
           </div>
-          <div class="fgroup"><label>?�형</label>
+          <div class="fgroup"><label>유형</label>
             <select class="finput" id="quickType" onchange="toggleQuick()">
-              <option value="post">?�� 게시�?/option>
-              <option value="comment">?�� ?��?</option>
+              <option value="post">📄 게시물</option>
+              <option value="comment">💬 댓글</option>
             </select>
           </div>
           <div id="qPostFields">
             <div class="fgroup"><label>분류</label>
               <select class="finput" id="qCategory">
-                <option>출석체크</option><option>00?�원</option><option>00?�다</option>
-                <option>?�머게시??/option><option>?�동�?관??/option>
-                <option>?�상(?�사)</option><option>?�상(간식)</option><option>?�상(기�?)</option>
+                <option>출석체크</option><option>00응원</option><option>00이다</option>
+                <option>유머게시판</option><option>자동차 관련</option>
+                <option>일상(식사)</option><option>일상(간식)</option><option>일상(기타)</option>
               </select>
             </div>
             <div class="fgroup"><label>URL</label><input type="text" class="finput" id="qUrl" placeholder="cafe.naver.com/..."></div>
           </div>
           <div id="qCommentFields" style="display:none">
-            <div class="fgroup"><label>?��? ??/label><input type="number" class="finput" id="qCommentCount" value="1" min="1"></div>
+            <div class="fgroup"><label>댓글 수</label><input type="number" class="finput" id="qCommentCount" value="1" min="1"></div>
           </div>
-          <button class="save-btn" id="saveQuickBtn" onclick="saveQuick()">+ ?�??/button>
+          <button class="save-btn" id="saveQuickBtn" onclick="saveQuick()">+ 저장</button>
         </div>
 
         <!-- Cafe panel -->
         <div class="cafe-panel">
           <div class="panel-hd" style="padding:0 0 10px;border-bottom:1px solid var(--border);margin-bottom:10px;">
-            <div class="panel-title">???�록??카페</div>
+            <div class="panel-title">☕ 등록된 카페</div>
           </div>
           <div id="cafePanel"></div>
         </div>
@@ -992,7 +992,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
         <!-- Acc summary -->
         <div class="acc-summary">
           <div class="panel-hd" style="padding:0 0 8px;border-bottom:1px solid var(--border);margin-bottom:8px;">
-            <div class="panel-title editable" id="edit-acc-title">계정�??�늘 ?�황</div>
+            <div class="panel-title editable" id="edit-acc-title">계정별 오늘 현황</div>
           </div>
           <div id="accStatsList"></div>
         </div>
@@ -1004,19 +1004,19 @@ input[type="range"]::-webkit-slider-thumb:hover {
   <div class="page" id="page-records">
     <div class="panel">
       <div class="panel-hd">
-        <div class="panel-title">?�체 ?�업 기록</div>
+        <div class="panel-title">전체 작업 기록</div>
         <div class="records-filters">
           <select class="finput sel-account" id="recAccount" data-all="true" style="width:120px;padding:6px 10px;font-size:11px;" onchange="filterRecords()"></select>
           <select class="finput sel-cafe" id="recCafe" data-all="true" style="width:150px;padding:6px 10px;font-size:11px;" onchange="filterRecords()"></select>
-          <select class="finput" id="recType" style="width:100px;padding:6px 10px;font-size:11px;" onchange="filterRecords()"><option value="all">?�체 ?�형</option><option value="post">게시�?/option><option value="comment">?��?</option></select>
+          <select class="finput" id="recType" style="width:100px;padding:6px 10px;font-size:11px;" onchange="filterRecords()"><option value="all">전체 유형</option><option value="post">게시물</option><option value="comment">댓글</option></select>
           <input type="date" class="finput" id="recDate" style="width:134px;padding:6px 10px;font-size:11px;" onchange="filterRecords()">
-          <button class="btn btn-ghost" style="font-size:11px;padding:6px 10px;" onclick="resetRecordsFilter()">초기??/button>
+          <button class="btn btn-ghost" style="font-size:11px;padding:6px 10px;" onclick="resetRecordsFilter()">초기화</button>
         </div>
         <div id="recordsSummary" style="font-family:var(--font-mono);font-size:11px;color:var(--text3);padding:8px 0 4px;"></div>
       </div>
       <div class="tbl-wrap scrollable" style="max-height:520px">
         <table>
-          <thead><tr><th>?�짜</th><th>?�간</th><th>계정</th><th>카페</th><th>?�형</th><th>URL / ?��???/th><th>금액</th><th></th></tr></thead>
+          <thead><tr><th>날짜</th><th>시간</th><th>계정</th><th>카페</th><th>유형</th><th>URL / 댓글수</th><th>금액</th><th></th></tr></thead>
           <tbody id="recordsTable"></tbody>
         </table>
       </div>
@@ -1027,26 +1027,26 @@ input[type="range"]::-webkit-slider-thumb:hover {
   <div class="page" id="page-calendar">
     <div class="cal-header">
       <div class="cal-nav">
-        <button onclick="changeMonth(-1)">??/button>
-        <span class="cal-month" id="calMonth">2025??2??/span>
-        <button onclick="changeMonth(1)">??/button>
+        <button onclick="changeMonth(-1)">‹</button>
+        <span class="cal-month" id="calMonth">2025년 2월</span>
+        <button onclick="changeMonth(1)">›</button>
       </div>
-      <div style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">???�계: <span id="calMonthTotal" style="color:var(--green)">0??/span></div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">월 누계: <span id="calMonthTotal" style="color:var(--green)">0원</span></div>
     </div>
     <div class="cal-grid">
       <div class="cal-weekdays">
-        <div class="cal-wd" style="color:var(--pink)">??/div>
-        <div class="cal-wd">??/div><div class="cal-wd">??/div><div class="cal-wd">??/div><div class="cal-wd">�?/div><div class="cal-wd">�?/div>
-        <div class="cal-wd" style="color:var(--accent)">??/div>
+        <div class="cal-wd" style="color:var(--pink)">일</div>
+        <div class="cal-wd">월</div><div class="cal-wd">화</div><div class="cal-wd">수</div><div class="cal-wd">목</div><div class="cal-wd">금</div>
+        <div class="cal-wd" style="color:var(--accent)">토</div>
       </div>
       <div class="cal-days" id="calDays"></div>
     </div>
 
-    <!-- ?�짜 ?�릭 ???�업 ?�역 ?�널 -->
+    <!-- 날짜 클릭 시 작업 내역 패널 -->
     <div id="calDayPanel" style="display:none;margin-top:16px;background:var(--surface2);border:1px solid var(--border);border-radius:16px;overflow:hidden;">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);">
-        <div style="font-family:var(--font-headline);font-weight:800;font-size:15px;" id="calDayPanelTitle">?�� ?�짜 ?�업 ?�역</div>
-        <button onclick="document.getElementById('calDayPanel').style.display='none'" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;line-height:1;">??/button>
+        <div style="font-family:var(--font-headline);font-weight:800;font-size:15px;" id="calDayPanelTitle">📅 날짜 작업 내역</div>
+        <button onclick="document.getElementById('calDayPanel').style.display='none'" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;line-height:1;">✕</button>
       </div>
       <div id="calDayPanelBody" style="padding:12px 18px;"></div>
     </div>
@@ -1056,17 +1056,17 @@ input[type="range"]::-webkit-slider-thumb:hover {
   <div class="page" id="page-charts">
     <div class="charts-grid">
       <div class="chart-card" style="grid-column:span 2">
-        <div class="chart-title">계정�??�번???�익</div>
+        <div class="chart-title">계정별 이번달 수익</div>
         <div id="accBarChart" style="margin-top:12px"></div>
       </div>
       <div class="chart-card" style="grid-column:span 2">
-        <div class="chart-title">카페�??�번???�익</div>
+        <div class="chart-title">카페별 이번달 수익</div>
         <div id="cafeBarChart" style="margin-top:12px"></div>
       </div>
       <div class="export-panel">
-        <div class="export-info"><div class="export-title">?�� ?�이???�보?�기</div><div class="export-desc">CSV ?�일�??�운로드</div></div>
+        <div class="export-info"><div class="export-title">📤 데이터 내보내기</div><div class="export-desc">CSV 파일로 다운로드</div></div>
         <div class="export-btns">
-          <button class="btn btn-ghost" onclick="exportCSV()">?�� CSV</button>
+          <button class="btn btn-ghost" onclick="exportCSV()">📄 CSV</button>
         </div>
       </div>
     </div>
@@ -1076,31 +1076,31 @@ input[type="range"]::-webkit-slider-thumb:hover {
   <div class="page" id="page-goals">
     <div class="goal-cards">
       <div class="goal-set-card">
-        <div class="goal-set-title">??목표 ?�익</div>
-        <div class="goal-set-current" style="color:var(--accent)" id="goal-day-earn">0??/div>
+        <div class="goal-set-title">일 목표 수익</div>
+        <div class="goal-set-current" style="color:var(--accent)" id="goal-day-earn">0원</div>
         <div class="goal-input-row">
           <input type="text" class="finput goal-input fmt-number" id="goalDayInput" value="30,000" inputmode="numeric">
-          <button class="goal-set-btn" onclick="saveGoal('daily','goalDayInput')">?�정</button>
+          <button class="goal-set-btn" onclick="saveGoal('daily','goalDayInput')">설정</button>
         </div>
         <div class="big-progress"><div class="big-fill gf-a" id="goal-day-bar" style="width:0%"></div></div>
         <div class="progress-info"><span id="goal-day-pct">0%</span></div>
       </div>
       <div class="goal-set-card">
-        <div class="goal-set-title">�?목표 ?�익</div>
-        <div class="goal-set-current" style="color:var(--pink)" id="goal-week-earn">0??/div>
+        <div class="goal-set-title">주 목표 수익</div>
+        <div class="goal-set-current" style="color:var(--pink)" id="goal-week-earn">0원</div>
         <div class="goal-input-row">
           <input type="text" class="finput goal-input fmt-number" id="goalWeekInput" value="100,000" inputmode="numeric">
-          <button class="goal-set-btn" onclick="saveGoal('weekly','goalWeekInput')">?�정</button>
+          <button class="goal-set-btn" onclick="saveGoal('weekly','goalWeekInput')">설정</button>
         </div>
         <div class="big-progress"><div class="big-fill gf-p" id="goal-week-bar" style="width:0%"></div></div>
         <div class="progress-info"><span id="goal-week-pct">0%</span></div>
       </div>
       <div class="goal-set-card">
-        <div class="goal-set-title">??목표 ?�익</div>
-        <div class="goal-set-current" style="color:var(--green)" id="goal-month-earn">0??/div>
+        <div class="goal-set-title">월 목표 수익</div>
+        <div class="goal-set-current" style="color:var(--green)" id="goal-month-earn">0원</div>
         <div class="goal-input-row">
           <input type="text" class="finput goal-input fmt-number" id="goalMonthInput" value="300,000" inputmode="numeric">
-          <button class="goal-set-btn" onclick="saveGoal('monthly','goalMonthInput')">?�정</button>
+          <button class="goal-set-btn" onclick="saveGoal('monthly','goalMonthInput')">설정</button>
         </div>
         <div class="big-progress"><div class="big-fill gf-g" id="goal-month-bar" style="width:0%"></div></div>
         <div class="progress-info"><span id="goal-month-pct">0%</span></div>
@@ -1113,58 +1113,58 @@ input[type="range"]::-webkit-slider-thumb:hover {
     <div class="settings-grid">
 
       <div class="settings-card">
-        <div class="settings-title">?�� ???�름 & 브랜??/div>
-        <div class="setting-row"><span class="setting-key">???�름</span><input class="setting-input" id="s-appname" value="?�바 ?�래�?></div>
-        <div class="setting-row"><span class="setting-key">?�단 ?�그</span><input class="setting-input" id="s-appeyebrow" value="NAVER CAFE"></div>
-        <div class="setting-row"><span class="setting-key">?�명</span><input class="setting-input" id="s-appsub" value="?�업 관�?& ?�익 ?�황"></div>
+        <div class="settings-title">🎨 앱 이름 & 브랜딩</div>
+        <div class="setting-row"><span class="setting-key">앱 이름</span><input class="setting-input" id="s-appname" value="알바 트래커"></div>
+        <div class="setting-row"><span class="setting-key">상단 태그</span><input class="setting-input" id="s-appeyebrow" value="NAVER CAFE"></div>
+        <div class="setting-row"><span class="setting-key">설명</span><input class="setting-input" id="s-appsub" value="작업 관리 & 수익 현황"></div>
       </div>
 
       <div class="settings-card">
-        <div class="settings-title">?�� ?��? & 목표 ?�정</div>
-        <div class="setting-row"><span class="setting-key">게시�??��?</span><input class="setting-input fmt-number" type="text" id="pricePost" value="200" inputmode="numeric" style="color:var(--green)"> <span style="font-size:10px;color:var(--text3)">??�?/span></div>
-        <div class="setting-row"><span class="setting-key">?��? ?��?</span><input class="setting-input fmt-number" type="text" id="priceComment" value="20" inputmode="numeric" style="color:var(--yellow)"> <span style="font-size:10px;color:var(--text3)">??�?/span></div>
-        <div class="setting-row"><span class="setting-key">??목표</span><input class="setting-input fmt-number" type="text" id="settingDayGoal" value="30,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">??/span></div>
-        <div class="setting-row"><span class="setting-key">�?목표</span><input class="setting-input fmt-number" type="text" id="settingWeekGoal" value="100,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">??/span></div>
-        <div class="setting-row"><span class="setting-key">??목표</span><input class="setting-input fmt-number" type="text" id="settingMonthGoal" value="300,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">??/span></div>
+        <div class="settings-title">💰 단가 & 목표 설정</div>
+        <div class="setting-row"><span class="setting-key">게시물 단가</span><input class="setting-input fmt-number" type="text" id="pricePost" value="200" inputmode="numeric" style="color:var(--green)"> <span style="font-size:10px;color:var(--text3)">원/개</span></div>
+        <div class="setting-row"><span class="setting-key">댓글 단가</span><input class="setting-input fmt-number" type="text" id="priceComment" value="20" inputmode="numeric" style="color:var(--yellow)"> <span style="font-size:10px;color:var(--text3)">원/개</span></div>
+        <div class="setting-row"><span class="setting-key">일 목표</span><input class="setting-input fmt-number" type="text" id="settingDayGoal" value="30,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">원</span></div>
+        <div class="setting-row"><span class="setting-key">주 목표</span><input class="setting-input fmt-number" type="text" id="settingWeekGoal" value="100,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">원</span></div>
+        <div class="setting-row"><span class="setting-key">월 목표</span><input class="setting-input fmt-number" type="text" id="settingMonthGoal" value="300,000" inputmode="numeric"> <span style="font-size:10px;color:var(--text3)">원</span></div>
       </div>
 
       <!-- Reset info card -->
       <div class="settings-card">
-        <div class="settings-title">?�� ?�동 초기??규칙</div>
+        <div class="settings-title">🔄 자동 초기화 규칙</div>
         <div class="reset-section">
-          <div class="reset-section-title"><span class="reset-chip day" style="font-size:10px">DAY</span> ?�늘 ?�익</div>
-          <div class="reset-section-desc">매일 ?�정 00:00??초기??br>초기????��: ?�늘 ?�익, ?�늘 게시�??? ?�늘 ?��? ??/div>
-          <div class="reset-next day">???�음 초기?? <span id="nextDay">--</span></div>
+          <div class="reset-section-title"><span class="reset-chip day" style="font-size:10px">DAY</span> 오늘 수익</div>
+          <div class="reset-section-desc">매일 자정 00:00에 초기화<br>초기화 항목: 오늘 수익, 오늘 게시물 수, 오늘 댓글 수</div>
+          <div class="reset-next day">⏱ 다음 초기화: <span id="nextDay">--</span></div>
         </div>
         <div class="reset-section">
-          <div class="reset-section-title"><span class="reset-chip week" style="font-size:10px">WEEK</span> ?�번 �??�익</div>
-          <div class="reset-section-desc">매주 ?�요???�정 00:00??초기??br>초기????��: ?�번 �??�익, 주간 게시�??��? ??/div>
-          <div class="reset-next week">?�� ?�음 초기?? <span id="nextWeek">--</span> (?�요??</div>
+          <div class="reset-section-title"><span class="reset-chip week" style="font-size:10px">WEEK</span> 이번 주 수익</div>
+          <div class="reset-section-desc">매주 일요일 자정 00:00에 초기화<br>초기화 항목: 이번 주 수익, 주간 게시물/댓글 수</div>
+          <div class="reset-next week">📅 다음 초기화: <span id="nextWeek">--</span> (일요일)</div>
         </div>
         <div class="reset-section">
-          <div class="reset-section-title"><span class="reset-chip month" style="font-size:10px">MONTH</span> ?�번 ???�익</div>
-          <div class="reset-section-desc">매월 마�?�????�정 00:00??초기??br>초기????��: ?�번 ???�익, ?�간 게시�??��? ??/div>
-          <div class="reset-next month">?�� ?�음 초기?? <span id="nextMonth">--</span> (?�말)</div>
+          <div class="reset-section-title"><span class="reset-chip month" style="font-size:10px">MONTH</span> 이번 달 수익</div>
+          <div class="reset-section-desc">매월 마지막 날 자정 00:00에 초기화<br>초기화 항목: 이번 달 수익, 월간 게시물/댓글 수</div>
+          <div class="reset-next month">📅 다음 초기화: <span id="nextMonth">--</span> (월말)</div>
         </div>
       </div>
 
       <div class="settings-card">
-        <div class="settings-title">?�� 메뉴 ?�름 ?�집</div>
+        <div class="settings-title">📋 메뉴 이름 편집</div>
         <div class="nav-settings-list">
-          <div class="nav-setting-item"><span>?��</span><input id="nav-dashboard" value="?�?�보??></div>
-          <div class="nav-setting-item"><span>?��</span><input id="nav-records" value="?�업 기록"></div>
-          <div class="nav-setting-item"><span>?��</span><input id="nav-calendar" value="?�력 �?></div>
-          <div class="nav-setting-item"><span>?��</span><input id="nav-charts" value="?�계 차트"></div>
-          <div class="nav-setting-item"><span>?��</span><input id="nav-goals" value="목표 & ?�성�?></div>
+          <div class="nav-setting-item"><span>📊</span><input id="nav-dashboard" value="대시보드"></div>
+          <div class="nav-setting-item"><span>📝</span><input id="nav-records" value="작업 기록"></div>
+          <div class="nav-setting-item"><span>📅</span><input id="nav-calendar" value="달력 뷰"></div>
+          <div class="nav-setting-item"><span>📈</span><input id="nav-charts" value="통계 차트"></div>
+          <div class="nav-setting-item"><span>🎯</span><input id="nav-goals" value="목표 & 달성률"></div>
         </div>
       </div>
 
       <div class="settings-card full">
-        <div class="settings-title">?�� ?�?�포그래???�정</div>
+        <div class="settings-title">🔤 타이포그래피 설정</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;align-items:start;">
           <!-- Font Scale Slider -->
           <div>
-            <div style="font-family:var(--font-mono);font-size:calc(var(--fs-xs)*var(--font-scale));color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-weight:600;margin-bottom:10px;">?�체 ?�트 ?�기</div>
+            <div style="font-family:var(--font-mono);font-size:calc(var(--fs-xs)*var(--font-scale));color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-weight:600;margin-bottom:10px;">전체 폰트 크기</div>
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
               <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">A</span>
               <input type="range" id="fontScaleSlider" min="80" max="130" value="100" step="5"
@@ -1178,15 +1178,15 @@ input[type="range"]::-webkit-slider-thumb:hover {
               <span style="font-family:var(--font-mono);font-size:calc(var(--fs-xs)*var(--font-scale));color:var(--text3)">130%</span>
             </div>
             <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
-              <button class="scale-preset" onclick="applyFontScale(85,this)">?�형 85%</button>
+              <button class="scale-preset" onclick="applyFontScale(85,this)">소형 85%</button>
               <button class="scale-preset active" onclick="applyFontScale(100,this)">기본 100%</button>
-              <button class="scale-preset" onclick="applyFontScale(110,this)">?��? 110%</button>
-              <button class="scale-preset" onclick="applyFontScale(120,this)">?�??120%</button>
+              <button class="scale-preset" onclick="applyFontScale(110,this)">확대 110%</button>
+              <button class="scale-preset" onclick="applyFontScale(120,this)">대형 120%</button>
             </div>
           </div>
           <!-- Headline font picker -->
           <div>
-            <div style="font-family:var(--font-mono);font-size:calc(var(--fs-xs)*var(--font-scale));color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-weight:600;margin-bottom:10px;">?�드?�인 ?�트</div>
+            <div style="font-family:var(--font-mono);font-size:calc(var(--fs-xs)*var(--font-scale));color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-weight:600;margin-bottom:10px;">헤드라인 폰트</div>
             <div style="display:flex;flex-direction:column;gap:6px;" id="headlineFontPicker">
               <label class="font-opt active"><input type="radio" name="hfont" value="'Satoshi','Inter',sans-serif" checked onchange="applyHeadlineFont(this.value)"> <span style="font-family:'Satoshi','Inter',sans-serif;font-weight:700;font-size:15px;">Satoshi</span> <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-left:4px;">추천</span></label>
               <label class="font-opt"><input type="radio" name="hfont" value="'Inter',sans-serif" onchange="applyHeadlineFont(this.value)"> <span style="font-family:'Inter',sans-serif;font-weight:700;font-size:15px;">Inter</span></label>
@@ -1195,7 +1195,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
           </div>
           <!-- Body font picker -->
           <div>
-            <div style="font-family:var(--font-mono);font-size:calc(var(--fs-xs)*var(--font-scale));color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-weight:600;margin-bottom:10px;">본문 ?�트</div>
+            <div style="font-family:var(--font-mono);font-size:calc(var(--fs-xs)*var(--font-scale));color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-weight:600;margin-bottom:10px;">본문 폰트</div>
             <div style="display:flex;flex-direction:column;gap:6px;" id="bodyFontPicker">
               <label class="font-opt active"><input type="radio" name="bfont" value="'Inter','Noto Sans KR',sans-serif" checked onchange="applyBodyFont(this.value)"> <span style="font-family:'Inter','Noto Sans KR',sans-serif;font-size:15px;">Inter</span> <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-left:4px;">추천</span></label>
               <label class="font-opt"><input type="radio" name="bfont" value="'Noto Sans KR',sans-serif" onchange="applyBodyFont(this.value)"> <span style="font-family:'Noto Sans KR',sans-serif;font-size:15px;">Noto Sans KR</span></label>
@@ -1205,16 +1205,16 @@ input[type="range"]::-webkit-slider-thumb:hover {
         </div>
         <!-- Preview -->
         <div id="fontPreview" style="margin-top:20px;padding:16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;">
-          <div style="font-family:var(--font-headline);font-size:calc(var(--fs-2xl)*var(--font-scale));font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;">?�바 ?�래�???미리보기</div>
-          <div style="font-family:var(--font-body);font-size:calc(var(--fs-base)*var(--font-scale));color:var(--text2);line-height:1.6;">?�늘??게시�??�익�??��? ?�익???�시간으�??�인?�세?? <span style="font-family:var(--font-mono);font-size:calc(var(--fs-xs)*var(--font-scale));color:var(--accent);font-weight:600;">+12,800??/span></div>
+          <div style="font-family:var(--font-headline);font-size:calc(var(--fs-2xl)*var(--font-scale));font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;">알바 트래커 — 미리보기</div>
+          <div style="font-family:var(--font-body);font-size:calc(var(--fs-base)*var(--font-scale));color:var(--text2);line-height:1.6;">오늘의 게시물 수익과 댓글 수익을 실시간으로 확인하세요. <span style="font-family:var(--font-mono);font-size:calc(var(--fs-xs)*var(--font-scale));color:var(--accent);font-weight:600;">+12,800원</span></div>
         </div>
       </div>
 
       <div class="settings-card full">
-        <div class="settings-title">??카페 목록 관�?/div>
+        <div class="settings-title">☕ 카페 목록 관리</div>
         <div class="cafe-settings-list" id="cafeSettingsList"></div>
         <div style="display:flex;gap:8px;margin-top:12px;">
-          <button class="add-item-btn" onclick="addCafeSetting()">+ 카페 추�?</button>
+          <button class="add-item-btn" onclick="addCafeSetting()">+ 카페 추가</button>
         </div>
       </div>
 
@@ -1227,58 +1227,59 @@ input[type="range"]::-webkit-slider-thumb:hover {
 <!-- ============ MODALS ============ -->
 <div class="overlay" id="addModal" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="modal">
-    <div class="modal-title">�??�업 기록 추�?<button class="close-x" onclick="document.getElementById('addModal').classList.remove('open')">??/button></div>
+    <div class="modal-title">＋ 작업 기록 추가<button class="close-x" onclick="document.getElementById('addModal').classList.remove('open')">✕</button></div>
     <div class="frow">
       <div class="fgroup"><label>계정</label><select class="finput sel-account" id="mAccount"></select></div>
-      <div class="fgroup"><label>?�짜</label><input type="date" class="finput" id="mDate"></div>
+      <div class="fgroup"><label>날짜</label><input type="date" class="finput" id="mDate"></div>
     </div>
     <div class="fgroup"><label>카페</label><select class="finput sel-cafe" id="mCafe"></select></div>
-    <div class="fgroup"><label>?�형</label>
-      <select class="finput" id="modalType" onchange="toggleModal()"><option value="post">?�� 게시�?/option><option value="comment">?�� ?��?</option></select>
+    <div class="fgroup"><label>유형</label>
+      <select class="finput" id="modalType" onchange="toggleModal()"><option value="post">📄 게시물</option><option value="comment">💬 댓글</option></select>
     </div>
     <div id="mPostFields">
       <div class="fgroup"><label>분류</label>
-        <select class="finput" id="mCategory"><option>출석체크</option><option>00?�원</option><option>00?�다</option><option>?�머게시??/option><option>?�동�?관??/option><option>?�상(?�사)</option><option>?�상(간식)</option><option>?�상(기�?)</option></select>
+        <select class="finput" id="mCategory"><option>출석체크</option><option>00응원</option><option>00이다</option><option>유머게시판</option><option>자동차 관련</option><option>일상(식사)</option><option>일상(간식)</option><option>일상(기타)</option></select>
       </div>
       <div class="fgroup"><label>URL</label><input type="text" class="finput" id="mUrl" placeholder="https://cafe.naver.com/..."></div>
     </div>
     <div id="mCommentFields" style="display:none">
-      <div class="fgroup"><label>?��? ??/label><input type="number" class="finput" id="mCommentCount" value="1" min="1"></div>
+      <div class="fgroup"><label>댓글 수</label><input type="number" class="finput" id="mCommentCount" value="1" min="1"></div>
     </div>
-    <div class="fgroup"><label>메모</label><input type="text" class="finput" id="mMemo" placeholder="?�택?�항"></div>
-    <button class="save-btn" id="saveWorkBtn" onclick="saveWork()">?�?�하�?/button>
+    <div class="fgroup"><label>메모</label><input type="text" class="finput" id="mMemo" placeholder="선택사항"></div>
+    <button class="save-btn" id="saveWorkBtn" onclick="saveWork()">저장하기</button>
   </div>
 </div>
 
 <div class="overlay" id="exportModal" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="modal" style="width:400px">
-    <div class="modal-title">�??�보?�기<button class="close-x" onclick="document.getElementById('exportModal').classList.remove('open')">??/button></div>
-    <div class="fgroup"><label>기간</label><select class="finput"><option>?�늘</option><option>?�번 �?/option><option>?�번 ??/option><option>?�체</option></select></div>
-    <div class="fgroup"><label>카페</label><select class="finput"><option>?�체 카페</option><option>?�리?�이??LX3 ?�럽</option><option>?�?�스 SP3 매니??/option></select></div>
-    <div class="fgroup"><label>계정</label><select class="finput"><option>?�체</option><option>dudqls9845</option><option>dudqls9852</option><option>dudqls9853</option></select></div>
+    <div class="modal-title">⬇ 내보내기<button class="close-x" onclick="document.getElementById('exportModal').classList.remove('open')">✕</button></div>
+    <div class="fgroup"><label>기간</label><select class="finput"><option>오늘</option><option>이번 주</option><option>이번 달</option><option>전체</option></select></div>
+    <div class="fgroup"><label>카페</label><select class="finput"><option>전체 카페</option><option>팰리세이드 LX3 클럽</option><option>셀토스 SP3 매니아</option></select></div>
+    <div class="fgroup"><label>계정</label><select class="finput"><option>전체</option><option>dudqls9845</option><option>dudqls9852</option><option>dudqls9853</option></select></div>
     <div style="display:flex;gap:10px;margin-top:4px;">
-      <button class="save-btn" style="background:var(--green)">?�� Excel ?�운로드</button>
-      <button class="save-btn" style="background:var(--surface3);color:var(--text)">?�� CSV ?�운로드</button>
+      <button class="save-btn" style="background:var(--green)">📊 Excel 다운로드</button>
+      <button class="save-btn" style="background:var(--surface3);color:var(--text)">📄 CSV 다운로드</button>
     </div>
   </div>
 </div>
 
 <script>
-/* ===================== SUPABASE 초기??===================== */
+/* ===================== SUPABASE 초기화 ===================== */
 const SUPABASE_URL = 'https://ckvtiisdmrzfpqreaocb.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNrdnRpaXNkbXJ6ZnBxcmVhb2NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyMTY4MDEsImV4cCI6MjA4Nzc5MjgwMX0.WbQhImwxL4ikFmiG3Qwk4VwAzLjwTBcYux4IrU7CQdA';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* ===================== ?�역 ?�태 ===================== */
+/* ===================== 전역 상태 ===================== */
 let gAccounts = [];
 let gCafes    = [];
 let gPosts    = [];
 let gComments = [];
 let gGoals    = [];
-let gSettings = {}; // key: value ?�태�??�??let calYear   = new Date().getFullYear();
+let gSettings = {}; // key: value 형태로 저장
+let calYear   = new Date().getFullYear();
 let calMonth2 = new Date().getMonth();
 const pages   = ['dashboard','records','calendar','charts','goals','settings'];
-const pageTitleMap = { dashboard:'?�?�보??, records:'?�업 기록', calendar:'?�력 �?, charts:'?�계 차트', goals:'목표 & ?�성�?, settings:'?�집 ?�정' };
+const pageTitleMap = { dashboard:'대시보드', records:'작업 기록', calendar:'달력 뷰', charts:'통계 차트', goals:'목표 & 달성률', settings:'편집 설정' };
 
 /* ===================== DB 로드 ===================== */
 async function loadAll() {
@@ -1319,40 +1320,43 @@ async function loadAll() {
   renderCafeSettings();
 }
 
-/* ===================== ?�늘 ?�터 ===================== */
-/* KST 기�? ?�늘 ?�짜 문자??(YYYY-MM-DD) */
+/* ===================== 오늘 필터 ===================== */
+/* KST 기준 오늘 날짜 문자열 (YYYY-MM-DD) */
 function getKSTDateStr(date = new Date()) {
   const kst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
   return kst.toISOString().split('T')[0];
 }
 
-/* KST 기�? ?�재 ?�각 ISO 문자??(UTC�?변?�해??반환 - Supabase ?�환) */
+/* KST 기준 현재 시각 ISO 문자열 (UTC로 변환해서 반환 - Supabase 호환) */
 function getKSTISOStr(date = new Date()) {
   return date.toISOString();
 }
 
 function getTodayStr() { return getKSTDateStr(); }
 
-// worked_at??'+09:00' ?�식?�든 'Z' ?�식?�든 KST ?�짜�??�규??function getKSTDateFromWorkedAt(workedAt) {
+// worked_at이 '+09:00' 형식이든 'Z' 형식이든 KST 날짜로 정규화
+function getKSTDateFromWorkedAt(workedAt) {
   if (!workedAt) return '';
-  // +09:00 ?�식?�면 ??10?�리가 ?��? KST ?�짜
+  // +09:00 형식이면 앞 10자리가 이미 KST 날짜
   if (workedAt.includes('+09:00')) return workedAt.slice(0, 10);
-  // UTC(Z) ?�식?�면 +9?�간 변??  const d = new Date(workedAt);
+  // UTC(Z) 형식이면 +9시간 변환
+  const d = new Date(workedAt);
   return getKSTDateStr(d);
 }
 
 function todayPosts()    { const t = getTodayStr(); return gPosts.filter(p => getKSTDateFromWorkedAt(p.worked_at) === t); }
 function todayComments() { const t = getTodayStr(); return gComments.filter(c => getKSTDateFromWorkedAt(c.worked_at) === t); }
 
-/* ===================== ?�?�보???�더 ===================== */
+/* ===================== 대시보드 렌더 ===================== */
 function renderDashboard() {
   const tp = todayPosts();
   const tc = todayComments();
   const todayEarn = tp.reduce((s,p)=>s+p.amount,0) + tc.reduce((s,c)=>s+c.amount,0);
   const todayCommentCount = tc.reduce((s,c)=>s+c.count,0);
 
-  // 주간/?�간 ?�익
-  // KST 기�? 주간/?�간 ?�작??  const nowKST = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
+  // 주간/월간 수익
+  // KST 기준 주간/월간 시작점
+  const nowKST = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
   const todayKSTStr = getKSTDateStr();
   const weekStartStr = getKSTDateStr(new Date(new Date().getTime() + 9*60*60*1000 - nowKST.getDay()*86400000));
   const monthStartStr = todayKSTStr.slice(0,7) + '-01';
@@ -1366,27 +1370,27 @@ function renderDashboard() {
   const weeklyGoal  = (gGoals.find(g=>g.type==='weekly')?.amount)  || 100000;
   const monthlyGoal = (gGoals.find(g=>g.type==='monthly')?.amount) || 300000;
 
-  // ?�익 카드 ?�데?�트
+  // 수익 카드 업데이트
   const todayAmountEl = document.getElementById('todayAmount');
   const weekAmountEl  = document.getElementById('weekAmount');
   const monthAmountEl = document.getElementById('monthAmount');
-  if (todayAmountEl) todayAmountEl.textContent = todayEarn.toLocaleString('ko-KR') + '??;
-  if (weekAmountEl)  weekAmountEl.textContent  = weekEarn.toLocaleString('ko-KR')  + '??;
-  if (monthAmountEl) monthAmountEl.textContent = monthEarn.toLocaleString('ko-KR') + '??;
+  if (todayAmountEl) todayAmountEl.textContent = todayEarn.toLocaleString('ko-KR') + '원';
+  if (weekAmountEl)  weekAmountEl.textContent  = weekEarn.toLocaleString('ko-KR')  + '원';
+  if (monthAmountEl) monthAmountEl.textContent = monthEarn.toLocaleString('ko-KR') + '원';
 
-  // ?�계 카드
+  // 통계 카드
   const todayPostsEl    = document.getElementById('statTodayPosts');
   const todayCommentsEl = document.getElementById('statTodayComments');
   const todayEarnEl     = document.getElementById('statTodayEarn');
   const statAccountsEl  = document.getElementById('statAccounts');
   const statCafesEl     = document.getElementById('statCafes');
-  if (todayPostsEl)    todayPostsEl.textContent    = tp.length + '�?;
-  if (todayCommentsEl) todayCommentsEl.textContent = todayCommentCount + '�?;
-  if (todayEarnEl)     todayEarnEl.textContent     = todayEarn.toLocaleString('ko-KR') + '??;
-  if (statAccountsEl)  statAccountsEl.textContent  = gAccounts.length + '�?;
-  if (statCafesEl)     statCafesEl.textContent     = gCafes.length + '�?;
+  if (todayPostsEl)    todayPostsEl.textContent    = tp.length + '개';
+  if (todayCommentsEl) todayCommentsEl.textContent = todayCommentCount + '개';
+  if (todayEarnEl)     todayEarnEl.textContent     = todayEarn.toLocaleString('ko-KR') + '원';
+  if (statAccountsEl)  statAccountsEl.textContent  = gAccounts.length + '개';
+  if (statCafesEl)     statCafesEl.textContent     = gCafes.length + '개';
 
-  // 목표 ?�로그레?�바
+  // 목표 프로그레스바
   const dailyPct   = Math.min(Math.round(todayEarn / dailyGoal * 100), 100);
   const weeklyPct  = Math.min(Math.round(weekEarn  / weeklyGoal  * 100), 100);
   const monthlyPct = Math.min(Math.round(monthEarn / monthlyGoal * 100), 100);
@@ -1404,14 +1408,15 @@ function renderDashboard() {
   if (pWeekPct)  pWeekPct.textContent  = weeklyPct  + '%';
   if (pMonthPct) pMonthPct.textContent = monthlyPct + '%';
 
-  // ?�업 ?�이�?  buildDashAccTabs();
+  // 작업 테이블
+  buildDashAccTabs();
   renderWorkTable(tp, tc);
 
-  // 계정�??�황
+  // 계정별 현황
   renderAccStats();
 }
 
-/* ===================== ?�업 ?�이�??�더 ===================== */
+/* ===================== 작업 테이블 렌더 ===================== */
 function renderWorkTable(tp, tc, filterType='all') {
   const tbody = document.getElementById('workTable');
   if (!tbody) return;
@@ -1422,7 +1427,7 @@ function renderWorkTable(tp, tc, filterType='all') {
   ].sort((a,b)=>new Date(b.worked_at)-new Date(a.worked_at));
 
   if (items.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--text3);font-family:var(--font-mono);font-size:12px;">?�늘 ?�업 ?�역???�습?�다.<br>?�업 추�? 버튼???�러 기록?�세??</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--text3);font-family:var(--font-mono);font-size:12px;">오늘 작업 내역이 없습니다.<br>작업 추가 버튼을 눌러 기록하세요.</td></tr>`;
     return;
   }
 
@@ -1434,25 +1439,25 @@ function renderWorkTable(tp, tc, filterType='all') {
     const color = acc.color || '#8b7cf8';
     const isComment = item._type === 'comment';
     const urlCell = !isComment && item.url
-      ? `<a href="${item.url}" target="_blank" style="font-family:var(--font-mono);font-size:9px;color:var(--accent);text-decoration:none;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;">링크 ??/a>`
-      : (isComment ? `<span style="color:var(--text2);font-size:10px;">${item.count}�?/span>` : '<span style="color:var(--text3)">??/span>');
+      ? `<a href="${item.url}" target="_blank" style="font-family:var(--font-mono);font-size:9px;color:var(--accent);text-decoration:none;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;">링크 ↗</a>`
+      : (isComment ? `<span style="color:var(--text2);font-size:10px;">${item.count}개</span>` : '<span style="color:var(--text3)">—</span>');
     const typeCell = isComment
-      ? `<span class="tbadge" style="background:rgba(251,191,36,0.1);color:var(--yellow)">?�� ?��?</span>`
-      : `<span class="tbadge">${item.category||'게시�?}</span>`;
+      ? `<span class="tbadge" style="background:rgba(251,191,36,0.1);color:var(--yellow)">💬 댓글</span>`
+      : `<span class="tbadge">${item.category||'게시물'}</span>`;
 
     return `<tr data-type="${item._type}" style="border-bottom:1px solid rgba(40,40,60,0.5)">
       <td class="time-cell" style="padding:11px 14px">${time}</td>
       <td style="padding:11px 14px"><span class="atag" style="background:${color}20;color:${color}">${acc.username||'-'}</span></td>
-      <td style="padding:11px 14px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text2);background:var(--surface3);padding:2px 8px;border-radius:4px;">??${cafe.name||'-'}</span></td>
+      <td style="padding:11px 14px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text2);background:var(--surface3);padding:2px 8px;border-radius:4px;">☕ ${cafe.name||'-'}</span></td>
       <td style="padding:11px 14px">${typeCell}</td>
       <td style="padding:11px 14px">${urlCell}</td>
       <td style="padding:11px 14px;font-family:var(--font-mono);font-size:11px;color:${isComment?'var(--yellow)':'var(--green)'};font-weight:700">+${item.amount.toLocaleString()}</td>
-      <td style="padding:11px 14px"><button onclick="deleteItem('${item._type}','${item.id}')" style="background:none;border:1px solid rgba(244,114,182,0.3);color:var(--pink);cursor:pointer;border-radius:5px;padding:2px 7px;font-size:11px;" onmouseover="this.style.background='rgba(244,114,182,0.1)'" onmouseout="this.style.background='none'">??/button></td>
+      <td style="padding:11px 14px"><button onclick="deleteItem('${item._type}','${item.id}')" style="background:none;border:1px solid rgba(244,114,182,0.3);color:var(--pink);cursor:pointer;border-radius:5px;padding:2px 7px;font-size:11px;" onmouseover="this.style.background='rgba(244,114,182,0.1)'" onmouseout="this.style.background='none'">✕</button></td>
     </tr>`;
   }).join('');
 }
 
-/* ===================== 계정�??�황 ===================== */
+/* ===================== 계정별 현황 ===================== */
 function renderAccStats() {
   const tp = todayPosts();
   const tc = todayComments();
@@ -1477,9 +1482,9 @@ function renderAccStats() {
           <div style="width:8px;height:8px;border-radius:50%;background:${acc.color}"></div>
           <span class="acc-nm">${acc.username}</span>
         </div>
-        <span class="acc-earn2" style="color:${acc.color}">+${earn.toLocaleString()}??/span>
+        <span class="acc-earn2" style="color:${acc.color}">+${earn.toLocaleString()}원</span>
       </div>
-      <div class="acc-detail"><span>게시�?${accPosts.length}�?/span><span>?��? ${commentCount}�?/span></div>
+      <div class="acc-detail"><span>게시물 ${accPosts.length}개</span><span>댓글 ${commentCount}개</span></div>
       <div style="height:3px;background:var(--surface3);border-radius:2px;overflow:hidden">
         <div style="height:100%;width:${pct}%;background:${acc.color};border-radius:2px;transition:width 1s ease"></div>
       </div>
@@ -1487,7 +1492,7 @@ function renderAccStats() {
   }).join('');
 }
 
-/* ===================== ?�업 기록 ?�이지 ?�더 ===================== */
+/* ===================== 작업 기록 페이지 렌더 ===================== */
 function renderRecords() {
   const tbody = document.getElementById('recordsTable');
   if (!tbody) return;
@@ -1498,7 +1503,7 @@ function renderRecords() {
   ].sort((a,b)=>new Date(b.worked_at)-new Date(a.worked_at));
 
   if (all.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" style="padding:32px;text-align:center;color:var(--text3);font-family:var(--font-mono);font-size:12px;">?�업 ?�역???�습?�다.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="padding:32px;text-align:center;color:var(--text3);font-family:var(--font-mono);font-size:12px;">작업 내역이 없습니다.</td></tr>`;
     return;
   }
 
@@ -1511,31 +1516,31 @@ function renderRecords() {
     const color = acc.color || '#8b7cf8';
     const isComment = item._type === 'comment';
     const urlCell = !isComment && item.url
-      ? `<a href="${item.url}" target="_blank" style="font-family:var(--font-mono);font-size:9px;color:var(--accent);text-decoration:none;">링크 ??/a>`
-      : (isComment ? `<span style="font-size:10px;color:var(--text2)">${item.count}�?/span>` : '<span style="color:var(--text3)">??/span>');
+      ? `<a href="${item.url}" target="_blank" style="font-family:var(--font-mono);font-size:9px;color:var(--accent);text-decoration:none;">링크 ↗</a>`
+      : (isComment ? `<span style="font-size:10px;color:var(--text2)">${item.count}개</span>` : '<span style="color:var(--text3)">—</span>');
 
     return `<tr data-type="${item._type}" style="border-bottom:1px solid rgba(40,40,60,0.5)">
       <td class="time-cell" style="padding:11px 14px">${dateStr}</td>
       <td class="time-cell" style="padding:11px 14px">${timeStr}</td>
       <td style="padding:11px 14px"><span class="atag" style="background:${color}20;color:${color}">${acc.username||'-'}</span></td>
-      <td style="padding:11px 14px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text2);background:var(--surface3);padding:2px 8px;border-radius:4px;white-space:nowrap">??${cafe.name||'-'}</span></td>
-      <td style="padding:11px 14px"><span class="tbadge" style="${isComment?'background:rgba(251,191,36,0.1);color:var(--yellow)':''}">${isComment?'?�� ?��?':'?�� '+(item.category||'게시�?)}</span></td>
+      <td style="padding:11px 14px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text2);background:var(--surface3);padding:2px 8px;border-radius:4px;white-space:nowrap">☕ ${cafe.name||'-'}</span></td>
+      <td style="padding:11px 14px"><span class="tbadge" style="${isComment?'background:rgba(251,191,36,0.1);color:var(--yellow)':''}">${isComment?'💬 댓글':'📄 '+(item.category||'게시물')}</span></td>
       <td style="padding:11px 14px">${urlCell}</td>
-      <td style="padding:11px 14px;font-family:var(--font-mono);font-size:11px;color:${isComment?'var(--yellow)':'var(--green)'};font-weight:700;white-space:nowrap">+${item.amount.toLocaleString()}??/td>
-      <td style="padding:11px 14px"><button onclick="deleteItem('${item._type}','${item.id}')" style="background:none;border:1px solid rgba(244,114,182,0.3);color:var(--pink);cursor:pointer;border-radius:5px;padding:2px 7px;font-size:11px;" onmouseover="this.style.background='rgba(244,114,182,0.1)'" onmouseout="this.style.background='none'">??/button></td>
+      <td style="padding:11px 14px;font-family:var(--font-mono);font-size:11px;color:${isComment?'var(--yellow)':'var(--green)'};font-weight:700;white-space:nowrap">+${item.amount.toLocaleString()}원</td>
+      <td style="padding:11px 14px"><button onclick="deleteItem('${item._type}','${item.id}')" style="background:none;border:1px solid rgba(244,114,182,0.3);color:var(--pink);cursor:pointer;border-radius:5px;padding:2px 7px;font-size:11px;" onmouseover="this.style.background='rgba(244,114,182,0.1)'" onmouseout="this.style.background='none'">✕</button></td>
     </tr>`;
   }).join('');
 
-  // ?�계
+  // 합계
   const total = all.reduce((s,i)=>s+i.amount,0);
   const summaryEl = document.getElementById('recordsSummary');
-  if (summaryEl) summaryEl.textContent = `�?${all.length}�?· ?�계 ${total.toLocaleString()}??;
+  if (summaryEl) summaryEl.textContent = `총 ${all.length}건 · 합계 ${total.toLocaleString()}원`;
 }
 
-/* ===================== ?�력 ?�더 ===================== */
+/* ===================== 달력 렌더 ===================== */
 function renderCalendar() { buildCalForMonth(calYear, calMonth2); }
 
-/* ===================== ?�계 차트 ?�더 ===================== */
+/* ===================== 통계 차트 렌더 ===================== */
 function renderCharts() {
   const monthStartStr = getKSTDateStr().slice(0,7) + '-01';
   const accChartEl = document.getElementById('accBarChart');
@@ -1551,13 +1556,13 @@ function renderCharts() {
       return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
         <div class="bar-lbl" style="color:${acc.color}">${acc.username}</div>
         <div style="flex:1;height:22px;background:var(--surface3);border-radius:4px;overflow:hidden">
-          <div style="height:100%;width:${pct}%;background:${acc.color};border-radius:4px;display:flex;align-items:center;padding-left:8px;font-family:var(--font-mono);font-size:9px;color:rgba(255,255,255,0.85);transition:width 1s ease;min-width:${earn?'60px':'0'}">${earn?earn.toLocaleString()+'??:''}</div>
+          <div style="height:100%;width:${pct}%;background:${acc.color};border-radius:4px;display:flex;align-items:center;padding-left:8px;font-family:var(--font-mono);font-size:9px;color:rgba(255,255,255,0.85);transition:width 1s ease;min-width:${earn?'60px':'0'}">${earn?earn.toLocaleString()+'원':''}</div>
         </div>
       </div>`;
     }).join('');
   }
 
-  // 카페�??�번 ???�익
+  // 카페별 이번 달 수익
   const cafeChartEl = document.getElementById('cafeBarChart');
   if (cafeChartEl) {
     const maxCafe = Math.max(...gCafes.map(cafe => {
@@ -1569,16 +1574,16 @@ function renderCharts() {
                  + gComments.filter(c=>c.cafe_id===cafe.id&&getKSTDateFromWorkedAt(c.worked_at)>=monthStartStr).reduce((s,c)=>s+c.amount,0);
       const pct = Math.round(earn/maxCafe*100);
       return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-        <div class="bar-lbl">??${cafe.name}</div>
+        <div class="bar-lbl">☕ ${cafe.name}</div>
         <div style="flex:1;height:22px;background:var(--surface3);border-radius:4px;overflow:hidden">
-          <div style="height:100%;width:${pct}%;background:var(--accent);border-radius:4px;display:flex;align-items:center;padding-left:8px;font-family:var(--font-mono);font-size:9px;color:rgba(255,255,255,0.85);transition:width 1s ease;min-width:${earn?'60px':'0'}">${earn?earn.toLocaleString()+'??:''}</div>
+          <div style="height:100%;width:${pct}%;background:var(--accent);border-radius:4px;display:flex;align-items:center;padding-left:8px;font-family:var(--font-mono);font-size:9px;color:rgba(255,255,255,0.85);transition:width 1s ease;min-width:${earn?'60px':'0'}">${earn?earn.toLocaleString()+'원':''}</div>
         </div>
       </div>`;
     }).join('');
   }
 }
 
-/* ===================== 목표 ?�더 ===================== */
+/* ===================== 목표 렌더 ===================== */
 function renderGoals() {
   const todayStr     = getKSTDateStr();
   const nowKST       = new Date(new Date().getTime() + 9*60*60*1000);
@@ -1598,7 +1603,7 @@ function renderGoals() {
   const pricePost   = (gGoals.find(g=>g.type==='price_post')?.amount)    || 200;
   const priceComment= (gGoals.find(g=>g.type==='price_comment')?.amount) || 20;
 
-  // ?�력창에 ?�?�된 �?반영
+  // 입력창에 저장된 값 반영
   const dayEl   = document.getElementById('goalDayInput');
   const weekEl  = document.getElementById('goalWeekInput');
   const monthEl = document.getElementById('goalMonthInput');
@@ -1610,55 +1615,57 @@ function renderGoals() {
   if (postEl)  postEl.value  = pricePost.toLocaleString('ko-KR');
   if (cmtEl)   cmtEl.value   = priceComment.toLocaleString('ko-KR');
 
-  // ?�정 ?�이지 목표 ?�력창도 ?�기??  const sDay   = document.getElementById('settingDayGoal');
+  // 설정 페이지 목표 입력창도 동기화
+  const sDay   = document.getElementById('settingDayGoal');
   const sMonth = document.getElementById('settingMonthGoal');
   if (sDay)   sDay.value   = dailyGoal.toLocaleString('ko-KR');
   if (sMonth) sMonth.value = monthlyGoal.toLocaleString('ko-KR');
 
   const sets = [
-    {id:'goal-day',  earn:todayEarn,  goal:dailyGoal,   label:'??목표'},
-    {id:'goal-week', earn:weekEarn,   goal:weeklyGoal,  label:'�?목표'},
-    {id:'goal-month',earn:monthEarn,  goal:monthlyGoal, label:'??목표'},
+    {id:'goal-day',  earn:todayEarn,  goal:dailyGoal,   label:'일 목표'},
+    {id:'goal-week', earn:weekEarn,   goal:weeklyGoal,  label:'주 목표'},
+    {id:'goal-month',earn:monthEarn,  goal:monthlyGoal, label:'월 목표'},
   ];
   sets.forEach(({id, earn, goal}) => {
     const pct = Math.min(Math.round(earn/goal*100),100);
     const earnEl = document.getElementById(id+'-earn');
     const pctEl  = document.getElementById(id+'-pct');
     const barEl  = document.getElementById(id+'-bar');
-    if (earnEl) earnEl.textContent = earn.toLocaleString()+'??;
+    if (earnEl) earnEl.textContent = earn.toLocaleString()+'원';
     if (pctEl)  pctEl.textContent  = pct+'%';
     if (barEl)  barEl.style.width  = pct+'%';
   });
 }
 
-/* ===================== 모달 ?�?�트 채우�?===================== */
+/* ===================== 모달 셀렉트 채우기 ===================== */
 function populateSelects() {
-  // ?�재 ?�택�??�??  const savedVals = {};
+  // 현재 선택값 저장
+  const savedVals = {};
   document.querySelectorAll('.sel-account, .sel-cafe').forEach(el => {
     if (el.id) savedVals[el.id] = el.value;
   });
 
-  // 계정 ?�션 ??sel-account �?data-all ?�으�?"?�체" ?�션 ?�에 붙임
+  // 계정 옵션 — sel-account 중 data-all 있으면 "전체" 옵션 앞에 붙임
   const accOpts = gAccounts.map(a=>`<option value="${a.id}">${a.username}</option>`).join('');
   document.querySelectorAll('.sel-account').forEach(el => {
     const hasAll = el.dataset.all === 'true';
-    el.innerHTML = (hasAll ? '<option value="all">?�체 계정</option>' : '') + accOpts;
+    el.innerHTML = (hasAll ? '<option value="all">전체 계정</option>' : '') + accOpts;
   });
 
-  // 카페 ?�션 ??sel-cafe �?data-all ?�으�?"?�체" ?�션 ?�에 붙임
+  // 카페 옵션 — sel-cafe 중 data-all 있으면 "전체" 옵션 앞에 붙임
   const cafeOpts = gCafes.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
   document.querySelectorAll('.sel-cafe').forEach(el => {
     const hasAll = el.dataset.all === 'true';
-    el.innerHTML = (hasAll ? '<option value="all">?�체 카페</option>' : '') + cafeOpts;
+    el.innerHTML = (hasAll ? '<option value="all">전체 카페</option>' : '') + cafeOpts;
   });
 
-  // ?�택�?복원
+  // 선택값 복원
   Object.entries(savedVals).forEach(([id, val]) => {
     const el = document.getElementById(id);
     if (el && val) el.value = val;
   });
 
-  // ?�이?�바 계정 목록
+  // 사이드바 계정 목록
   const sideAccEl = document.getElementById('sideAccounts');
   if (sideAccEl) {
     sideAccEl.innerHTML = gAccounts.map(a=>`
@@ -1668,31 +1675,32 @@ function populateSelects() {
       </div>`).join('');
   }
 
-  // 카페 ?�널
+  // 카페 패널
   const cafePanelEl = document.getElementById('cafePanel');
   if (cafePanelEl) {
     cafePanelEl.innerHTML = gCafes.map(c=>`
       <div class="cafe-item">
         <div>
           <div class="cafe-name editable">${c.name}</div>
-          <div class="cafe-accs" style="font-family:var(--font-mono);font-size:9px;color:var(--accent);margin-top:2px">?�성</div>
+          <div class="cafe-accs" style="font-family:var(--font-mono);font-size:9px;color:var(--accent);margin-top:2px">활성</div>
         </div>
-        <div class="cafe-right"><span class="cafe-badge">?�성</span></div>
+        <div class="cafe-right"><span class="cafe-badge">활성</span></div>
       </div>`).join('');
   }
 }
 
-/* ===================== ?�업 ?�??===================== */
-/* ===================== ??�� ===================== */
+/* ===================== 작업 저장 ===================== */
+/* ===================== 삭제 ===================== */
 async function deleteItem(type, id) {
-  if (!confirm("????��????��?�까??")) return;
+  if (!confirm("이 항목을 삭제할까요?")) return;
   if (type === "post") {
     await sb.from("posts").delete().eq("id", id);
   } else {
     await sb.from("comments").delete().eq("id", id);
   }
   await loadAll();
-  // ?�체기록 ??��????��??경우 ?�터 ?��??�며 ?�렌??  const recPage = document.getElementById('page-records');
+  // 전체기록 탭에서 삭제한 경우 필터 유지하며 재렌더
+  const recPage = document.getElementById('page-records');
   if (recPage && recPage.classList.contains('active')) filterRecords();
 }
 
@@ -1704,7 +1712,7 @@ async function saveWork() {
   const workedAt   = dateVal ? new Date(`${dateVal}T12:00:00+09:00`).toISOString() : getKSTISOStr();
 
   const saveBtn = document.getElementById('saveWorkBtn');
-  if (saveBtn) { saveBtn.textContent = '?�??�?..'; saveBtn.disabled = true; }
+  if (saveBtn) { saveBtn.textContent = '저장 중...'; saveBtn.disabled = true; }
 
   try {
     let result;
@@ -1723,21 +1731,21 @@ async function saveWork() {
     }
 
     if (result.error) {
-      alert('?�???�패: ' + result.error.message);
+      alert('저장 실패: ' + result.error.message);
       console.error('Supabase error:', result.error);
     } else {
       document.getElementById('addModal').classList.remove('open');
       await loadAll();
     }
   } catch(e) {
-    alert('?�??�??�류: ' + e.message);
+    alert('저장 중 오류: ' + e.message);
     console.error(e);
   }
 
-  if (saveBtn) { saveBtn.textContent = '?�?�하�?; saveBtn.disabled = false; }
+  if (saveBtn) { saveBtn.textContent = '저장하기'; saveBtn.disabled = false; }
 }
 
-/* ===================== 빠른 ?�력 ?�??===================== */
+/* ===================== 빠른 입력 저장 ===================== */
 async function saveQuick() {
   const accountId = document.getElementById('qAccount').value;
   const cafeId    = document.getElementById('qCafe').value;
@@ -1745,14 +1753,14 @@ async function saveQuick() {
   const dateVal   = document.getElementById('qDate').value;
 
   if (!accountId || !cafeId) {
-    alert('계정�?카페�??�택?�주?�요.');
+    alert('계정과 카페를 선택해주세요.');
     return;
   }
 
   const workedAt = dateVal ? new Date(`${dateVal}T12:00:00+09:00`).toISOString() : getKSTISOStr();
 
   const btn = document.getElementById('saveQuickBtn');
-  if (btn) { btn.textContent = '?�??�?..'; btn.disabled = true; }
+  if (btn) { btn.textContent = '저장 중...'; btn.disabled = true; }
 
   try {
     let result;
@@ -1769,32 +1777,32 @@ async function saveQuick() {
     }
 
     if (result.error) {
-      alert('???�???�패: ' + result.error.message);
+      alert('❌ 저장 실패: ' + result.error.message);
     } else {
       document.getElementById('qUrl') && (document.getElementById('qUrl').value = '');
       document.getElementById('qCommentCount') && (document.getElementById('qCommentCount').value = 1);
       await loadAll();
     }
   } catch(e) {
-    alert('???�류: ' + e.message);
+    alert('❌ 오류: ' + e.message);
   }
 
-  if (btn) { btn.textContent = '+ ?�??; btn.disabled = false; }
+  if (btn) { btn.textContent = '+ 저장'; btn.disabled = false; }
 }
 
-/* ===================== ?�자 ?�동 콤마 ===================== */
+/* ===================== 숫자 자동 콤마 ===================== */
 function formatNumberInput(el) {
   const raw = el.value.replace(/,/g, '').replace(/[^0-9]/g, '');
   if (raw === '') { el.value = ''; return; }
   el.value = parseInt(raw).toLocaleString('ko-KR');
 }
 
-// ?�이지 로드 ??.fmt-number ?�래???�력 ?�드???�벤???�결
+// 페이지 로드 후 .fmt-number 클래스 입력 필드에 이벤트 연결
 window.addEventListener('DOMContentLoaded', () => {
   loadAll();
   document.querySelectorAll('.fmt-number').forEach(el => {
     el.addEventListener('input', () => formatNumberInput(el));
-    // 초기값도 ?�맷
+    // 초기값도 포맷
     if (el.value) formatNumberInput(el);
   });
 });
@@ -1803,9 +1811,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function setDate() {
   const now = new Date();
-  const days = ['??,'??,'??,'??,'�?,'�?,'??];
+  const days = ['일','월','화','수','목','금','토'];
   document.getElementById('pageDate').textContent =
-    `${now.getFullYear()}??${now.getMonth()+1}??${now.getDate()}??${days[now.getDay()]}?�일`;
+    `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 ${days[now.getDay()]}요일`;
   const today = now.toISOString().split('T')[0];
   document.getElementById('qDate').value = today;
   document.getElementById('mDate').value = today;
@@ -1837,7 +1845,7 @@ function getMidnightToday() {
 }
 
 function formatKR(dt) {
-  return `${dt.getMonth()+1}??${dt.getDate()}??;
+  return `${dt.getMonth()+1}월 ${dt.getDate()}일`;
 }
 
 function msToHMS(ms) {
@@ -1850,22 +1858,22 @@ function msToHMS(ms) {
 function updateResets() {
   const now = new Date();
 
-  // DAY ??countdown HH:MM:SS
+  // DAY — countdown HH:MM:SS
   const dayMs = getMidnightToday() - now;
   const cdDay = document.getElementById('cdDay');
   if (cdDay) cdDay.textContent = msToHMS(dayMs);
 
-  // WEEK ??days until Sunday
+  // WEEK — days until Sunday
   const nextSun = getNextSunday();
   const weekDays = Math.ceil((nextSun - now) / 86400000);
   const cdWeek = document.getElementById('cdWeek');
-  if (cdWeek) cdWeek.textContent = weekDays <= 1 ? '?�일' : `${weekDays}????;
+  if (cdWeek) cdWeek.textContent = weekDays <= 1 ? '내일' : `${weekDays}일 후`;
 
-  // MONTH ??days until end of month
+  // MONTH — days until end of month
   const endMonth = getEndOfMonth();
   const monthDays = Math.ceil((endMonth - now) / 86400000);
   const cdMonth = document.getElementById('cdMonth');
-  if (cdMonth) cdMonth.textContent = monthDays <= 0 ? '?�늘' : `${monthDays}????;
+  if (cdMonth) cdMonth.textContent = monthDays <= 0 ? '오늘' : `${monthDays}일 후`;
 
   // Settings panel
   const nd = document.getElementById('nextDay');
@@ -1886,7 +1894,7 @@ function checkResets() {
   const monthStr  = `${now.getFullYear()}-${now.getMonth()}`;
 
   if (localStorage.getItem('lastDay') && localStorage.getItem('lastDay') !== todayStr) {
-    loadAll(); // ?�짜 바뀌면 ?�이???�로고침
+    loadAll(); // 날짜 바뀌면 데이터 새로고침
   }
   localStorage.setItem('lastDay', todayStr);
   localStorage.setItem('lastWeek', weekStr);
@@ -1916,23 +1924,23 @@ function switchView(name, navEl, tabEl) {
   if(tabEl) tabEl.classList.add('active');
   document.getElementById('edit-page-title').textContent = pageTitleMap[name] || name;
 
-  // ?�이지�??�??버튼 ?�시
+  // 페이지별 저장 버튼 표시
   const saveBtn = document.getElementById('saveAllBtn');
   if (saveBtn) {
-    // ?�??버튼??보여�??�이지 목록
+    // 저장 버튼을 보여줄 페이지 목록
     const savablePages = ['settings','dashboard','records','calendar','charts','goals'];
     saveBtn.style.display = savablePages.includes(name) ? 'inline-flex' : 'none';
 
-    // ?�이지�??�???�이블과 ?�수 ?�정
+    // 페이지별 저장 레이블과 함수 설정
     const labelMap = {
-      settings: '?�� ?�체 ?�??,
-      dashboard: '?�� ?�??,
-      records:  '?�� ?�??,
-      calendar: '?�� ?�??,
-      charts:   '?�� ?�??,
-      goals:    '?�� ?�??,
+      settings: '💾 전체 저장',
+      dashboard: '💾 저장',
+      records:  '💾 저장',
+      calendar: '💾 저장',
+      charts:   '💾 저장',
+      goals:    '💾 저장',
     };
-    saveBtn.textContent = labelMap[name] || '?�� ?�??;
+    saveBtn.textContent = labelMap[name] || '💾 저장';
     saveBtn.dataset.page = name;
   }
 }
@@ -1976,12 +1984,12 @@ function filterDashTable(val, el, kind) {
 function buildDashAccTabs() {
   const container = document.getElementById('dashAccTabs');
   if (!container) return;
-  container.innerHTML = `<div class="ftab ${dashFilterAcc==='all'?'active':''}" onclick="filterDashTable('all',this,'acc')">?�체</div>`
+  container.innerHTML = `<div class="ftab ${dashFilterAcc==='all'?'active':''}" onclick="filterDashTable('all',this,'acc')">전체</div>`
     + gAccounts.map(a => `<div class="ftab ${dashFilterAcc===a.id?'active':''}" style="${dashFilterAcc===a.id?'':''}color:inherit" onclick="filterDashTable('${a.id}',this,'acc')">${a.username}</div>`).join('');
 }
 function delRow(btn) { btn.closest('tr').remove(); }
 
-/* 기록 ?�터 */
+/* 기록 필터 */
 function filterRecords() {
   const accId  = document.getElementById('recAccount')?.value || 'all';
   const cafeId = document.getElementById('recCafe')?.value   || 'all';
@@ -2001,11 +2009,11 @@ function filterRecords() {
   const tbody = document.getElementById('recordsTable');
   const total = all.reduce((s,i)=>s+i.amount,0);
   const summaryEl = document.getElementById('recordsSummary');
-  if (summaryEl) summaryEl.textContent = `�?${all.length}�?· ?�계 ${total.toLocaleString()}??;
+  if (summaryEl) summaryEl.textContent = `총 ${all.length}건 · 합계 ${total.toLocaleString()}원`;
 
   if (!tbody) return;
   if (all.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8" style="padding:32px;text-align:center;color:var(--text3);font-family:var(--font-mono);font-size:12px;">조건??맞는 ?�업 ?�역???�습?�다.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="padding:32px;text-align:center;color:var(--text3);font-family:var(--font-mono);font-size:12px;">조건에 맞는 작업 내역이 없습니다.</td></tr>`;
     return;
   }
   tbody.innerHTML = all.map(item => {
@@ -2016,17 +2024,17 @@ function filterRecords() {
     const color = acc.color||'#8b7cf8';
     const isComment = item._type==='comment';
     const urlCell = !isComment&&item.url
-      ? `<a href="${item.url}" target="_blank" style="font-family:var(--font-mono);font-size:9px;color:var(--accent);text-decoration:none;">링크 ??/a>`
-      : (isComment?`<span style="font-size:10px;color:var(--text2)">${item.count}�?/span>`:'<span style="color:var(--text3)">??/span>');
+      ? `<a href="${item.url}" target="_blank" style="font-family:var(--font-mono);font-size:9px;color:var(--accent);text-decoration:none;">링크 ↗</a>`
+      : (isComment?`<span style="font-size:10px;color:var(--text2)">${item.count}개</span>`:'<span style="color:var(--text3)">—</span>');
     return `<tr style="border-bottom:1px solid rgba(40,40,60,0.5)">
       <td style="padding:11px 14px;font-family:var(--font-mono);font-size:10px;color:var(--text3)">${dateStr}</td>
       <td class="time-cell" style="padding:11px 14px">${timeStr}</td>
       <td style="padding:11px 14px"><span class="atag" style="background:${color}20;color:${color}">${acc.username||'-'}</span></td>
-      <td style="padding:11px 14px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text2);background:var(--surface3);padding:2px 8px;border-radius:4px;white-space:nowrap">??${cafe.name||'-'}</span></td>
-      <td style="padding:11px 14px"><span class="tbadge" style="${isComment?'background:rgba(251,191,36,0.1);color:var(--yellow)':''}">${isComment?'?�� ?��?':'?�� '+(item.category||'게시�?)}</span></td>
+      <td style="padding:11px 14px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text2);background:var(--surface3);padding:2px 8px;border-radius:4px;white-space:nowrap">☕ ${cafe.name||'-'}</span></td>
+      <td style="padding:11px 14px"><span class="tbadge" style="${isComment?'background:rgba(251,191,36,0.1);color:var(--yellow)':''}">${isComment?'💬 댓글':'📄 '+(item.category||'게시물')}</span></td>
       <td style="padding:11px 14px">${urlCell}</td>
-      <td style="padding:11px 14px;font-family:var(--font-mono);font-size:11px;color:${isComment?'var(--yellow)':'var(--green)'};font-weight:700;white-space:nowrap">+${item.amount.toLocaleString()}??/td>
-      <td style="padding:11px 14px"><button onclick="deleteItem('${item._type}','${item.id}')" style="background:none;border:1px solid rgba(244,114,182,0.3);color:var(--pink);cursor:pointer;border-radius:5px;padding:2px 7px;font-size:11px;" onmouseover="this.style.background='rgba(244,114,182,0.1)'" onmouseout="this.style.background='none'">??/button></td>
+      <td style="padding:11px 14px;font-family:var(--font-mono);font-size:11px;color:${isComment?'var(--yellow)':'var(--green)'};font-weight:700;white-space:nowrap">+${item.amount.toLocaleString()}원</td>
+      <td style="padding:11px 14px"><button onclick="deleteItem('${item._type}','${item.id}')" style="background:none;border:1px solid rgba(244,114,182,0.3);color:var(--pink);cursor:pointer;border-radius:5px;padding:2px 7px;font-size:11px;" onmouseover="this.style.background='rgba(244,114,182,0.1)'" onmouseout="this.style.background='none'">✕</button></td>
     </tr>`;
   }).join('');
 }
@@ -2036,7 +2044,7 @@ function resetRecordsFilter() {
   filterRecords();
 }
 
-/* ?�력 ???�동 */
+/* 달력 월 이동 */
 function changeMonth(dir) {
   calMonth2 += dir;
   if (calMonth2 < 0) { calMonth2=11; calYear--; }
@@ -2048,7 +2056,7 @@ function buildCalForMonth(year, month) {
   if (!container) return;
   container.innerHTML = '';
   const monthEl = document.getElementById('calMonth');
-  if (monthEl) monthEl.textContent = `${year}??${month+1}??;
+  if (monthEl) monthEl.textContent = `${year}년 ${month+1}월`;
 
   const firstDay = new Date(year,month,1).getDay();
   const daysInMonth = new Date(year,month+1,0).getDate();
@@ -2072,10 +2080,11 @@ function buildCalForMonth(year, month) {
     const isToday=day===today.getDate()&&month===today.getMonth()&&year===today.getFullYear();
     const el=document.createElement('div');el.className='cal-day'+(isToday?' today':'');
     const earn=dayEarnings[day]||0,p=dayPosts[day]||0,c=dayComments[day]||0;
-    el.innerHTML=`<div class="cal-day-num">${day}</div>${earn?`<div class="cal-day-earn">+${earn.toLocaleString()}</div>`:''}${(p||c)?`<div class="cal-chips">${p?`<span class="cal-chip cc-post">글 ${p}</span>`:''}${c?`<span class="cal-chip cc-comment">??${c}</span>`:''}</div>`:''}`;
+    el.innerHTML=`<div class="cal-day-num">${day}</div>${earn?`<div class="cal-day-earn">+${earn.toLocaleString()}</div>`:''}${(p||c)?`<div class="cal-chips">${p?`<span class="cal-chip cc-post">글 ${p}</span>`:''}${c?`<span class="cal-chip cc-comment">댓 ${c}</span>`:''}</div>`:''}`;
     el.style.cursor = 'pointer';
     el.addEventListener('click', () => showDayDetail(year, month, day));
-    // ?�택?????�이?�이??    el.dataset.day = day;
+    // 선택된 날 하이라이트
+    el.dataset.day = day;
     container.appendChild(el);
   }
   const totalCells=firstDay+daysInMonth;const rem=totalCells%7===0?0:7-(totalCells%7);
@@ -2083,29 +2092,30 @@ function buildCalForMonth(year, month) {
 
   const monthTotal=[...gPosts,...gComments].filter(i=>{const s=getKSTDateFromWorkedAt(i.worked_at);const [y,m]=s.split('-').map(Number);return y===year&&(m-1)===month;}).reduce((s,i)=>s+i.amount,0);
   const calTotalEl=document.getElementById('calMonthTotal');
-  if(calTotalEl) calTotalEl.textContent=monthTotal.toLocaleString()+'??;
+  if(calTotalEl) calTotalEl.textContent=monthTotal.toLocaleString()+'원';
 }
 
-/* ?�력 ?�짜 ?�릭 ???�당 ???�업 ?�역 ?�시 */
+/* 달력 날짜 클릭 → 해당 날 작업 내역 표시 */
 function showDayDetail(year, month, day) {
   const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
   const panel  = document.getElementById('calDayPanel');
   const title  = document.getElementById('calDayPanelTitle');
   const body   = document.getElementById('calDayPanelBody');
 
-  // ?�택?????�이?�이??  document.querySelectorAll('#calDays .cal-day').forEach(el => el.classList.remove('selected-day'));
+  // 선택된 날 하이라이트
+  document.querySelectorAll('#calDays .cal-day').forEach(el => el.classList.remove('selected-day'));
   const selectedEl = document.querySelector(`#calDays .cal-day[data-day="${day}"]`);
   if (selectedEl) selectedEl.classList.add('selected-day');
 
-  // ?�당 ?�짜 ?�이???�터
+  // 해당 날짜 데이터 필터
   const posts    = gPosts.filter(p => getKSTDateFromWorkedAt(p.worked_at) === dateStr);
   const comments = gComments.filter(c => getKSTDateFromWorkedAt(c.worked_at) === dateStr);
   const total    = [...posts,...comments].reduce((s,i)=>s+i.amount,0);
 
-  title.innerHTML = `?�� ${year}??${month+1}??${day}??<span style="font-family:var(--font-mono);font-size:13px;color:var(--green);margin-left:8px;">+${total.toLocaleString()}??/span>`;
+  title.innerHTML = `📅 ${year}년 ${month+1}월 ${day}일 <span style="font-family:var(--font-mono);font-size:13px;color:var(--green);margin-left:8px;">+${total.toLocaleString()}원</span>`;
 
   if (posts.length === 0 && comments.length === 0) {
-    body.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">?????�업 ?�역???�습?�다.</div>`;
+    body.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">이 날 작업 내역이 없습니다.</div>`;
   } else {
     const rows = [...posts.map(p=>({...p,_type:'post'})), ...comments.map(c=>({...c,_type:'comment'}))]
       .sort((a,b)=>new Date(a.worked_at)-new Date(b.worked_at));
@@ -2114,10 +2124,10 @@ function showDayDetail(year, month, day) {
       <table style="width:100%;border-collapse:collapse;font-size:12px;">
         <thead>
           <tr style="color:var(--text3);font-family:var(--font-mono);font-size:10px;border-bottom:1px solid var(--border);">
-            <th style="padding:6px 8px;text-align:left;">?�간</th>
+            <th style="padding:6px 8px;text-align:left;">시간</th>
             <th style="padding:6px 8px;text-align:left;">계정</th>
             <th style="padding:6px 8px;text-align:left;">카페</th>
-            <th style="padding:6px 8px;text-align:left;">?�형</th>
+            <th style="padding:6px 8px;text-align:left;">유형</th>
             <th style="padding:6px 8px;text-align:right;">금액</th>
           </tr>
         </thead>
@@ -2127,14 +2137,14 @@ function showDayDetail(year, month, day) {
             const accName  = item.account?.username  || '-';
             const cafeName = item.cafe?.name         || '-';
             const typeLabel = item._type === 'post'
-              ? `<span style="background:var(--surface3);color:var(--green);padding:2px 7px;border-radius:6px;font-size:10px;">?�� ${item.category||'게시�?}</span>`
-              : `<span style="background:var(--surface3);color:var(--pink);padding:2px 7px;border-radius:6px;font-size:10px;">?�� ?��? ${item.count||1}�?/span>`;
+              ? `<span style="background:var(--surface3);color:var(--green);padding:2px 7px;border-radius:6px;font-size:10px;">📄 ${item.category||'게시물'}</span>`
+              : `<span style="background:var(--surface3);color:var(--pink);padding:2px 7px;border-radius:6px;font-size:10px;">💬 댓글 ${item.count||1}개</span>`;
             return `<tr style="border-bottom:1px solid var(--border);">
               <td style="padding:8px 8px;color:var(--text3);font-family:var(--font-mono);">${time}</td>
               <td style="padding:8px 8px;color:var(--accent);font-weight:600;">${accName}</td>
               <td style="padding:8px 8px;color:var(--text2);">${cafeName}</td>
               <td style="padding:8px 8px;">${typeLabel}</td>
-              <td style="padding:8px 8px;text-align:right;color:var(--green);font-family:var(--font-mono);font-weight:700;">+${item.amount.toLocaleString()}??/td>
+              <td style="padding:8px 8px;text-align:right;color:var(--green);font-family:var(--font-mono);font-weight:700;">+${item.amount.toLocaleString()}원</td>
             </tr>`;
           }).join('')}
         </tbody>
@@ -2145,7 +2155,7 @@ function showDayDetail(year, month, day) {
   panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-/* 목표 ?�??*/
+/* 목표 저장 */
 async function saveGoal(type, inputId) {
   const raw = document.getElementById(inputId).value.replace(/,/g, '');
   const amount = parseInt(raw);
@@ -2156,15 +2166,16 @@ async function saveGoal(type, inputId) {
   } else {
     await sb.from('goals').insert({type, amount});
   }
-  // ?�???�료 ?�드�?  const btn = document.querySelector(`button[onclick="saveGoal('${type}','${inputId}')"]`);
-  if (btn) { const orig = btn.textContent; btn.textContent = '???�?�됨'; btn.style.color='var(--green)'; setTimeout(()=>{btn.textContent=orig;btn.style.color='';},1500); }
+  // 저장 완료 피드백
+  const btn = document.querySelector(`button[onclick="saveGoal('${type}','${inputId}')"]`);
+  if (btn) { const orig = btn.textContent; btn.textContent = '✓ 저장됨'; btn.style.color='var(--green)'; setTimeout(()=>{btn.textContent=orig;btn.style.color='';},1500); }
   await loadAll();
 }
 
-/* CSV ?�보?�기 */
+/* CSV 내보내기 */
 function exportCSV() {
   const all=[...gPosts.map(p=>({...p,_type:'post'})),...gComments.map(c=>({...c,_type:'comment'}))].sort((a,b)=>new Date(b.worked_at)-new Date(a.worked_at));
-  const rows=[['?�짜','?�간','계정','카페','?�형','카테고리/?��???,'URL','금액']];
+  const rows=[['날짜','시간','계정','카페','유형','카테고리/댓글수','URL','금액']];
   all.forEach(i=>{
     const dt=new Date(i.worked_at);
     rows.push([
@@ -2172,7 +2183,7 @@ function exportCSV() {
       dt.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}),
       i.account?.username||'',
       i.cafe?.name||'',
-      i._type==='post'?'게시�?:'?��?',
+      i._type==='post'?'게시물':'댓글',
       i._type==='post'?(i.category||''):(i.count||0),
       i._type==='post'?(i.url||''):'',
       i.amount,
@@ -2181,7 +2192,7 @@ function exportCSV() {
   const csv=rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
   const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
   const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=`?�바?�래�?${new Date().toISOString().split('T')[0]}.csv`;a.click();
+  const a=document.createElement('a');a.href=url;a.download=`알바트래커_${new Date().toISOString().split('T')[0]}.csv`;a.click();
   URL.revokeObjectURL(url);
 }
 
@@ -2191,7 +2202,7 @@ function toggleEditMode() {
   editMode = !editMode;
   document.body.classList.toggle('edit-mode', editMode);
   const btn = document.getElementById('editToggleBtn');
-  btn.textContent = editMode ? '???�료' : '?�️ ?�집';
+  btn.textContent = editMode ? '✓ 완료' : '✏️ 편집';
   btn.classList.toggle('on', editMode);
   document.querySelectorAll('.editable').forEach(el => {
     el.contentEditable = editMode ? 'true' : 'false';
@@ -2210,7 +2221,8 @@ function onEditableBlur(e) {
     const vt = document.getElementById('vt-'+page); if(vt) vt.textContent = el.textContent;
     pageTitleMap[page] = el.textContent;
   }
-  // Supabase???�??  if(id) saveSetting('editable_'+id, el.textContent);
+  // Supabase에 저장
+  if(id) saveSetting('editable_'+id, el.textContent);
 }
 function syncEdit(id, val) {
   const el = document.getElementById(id); if(el) el.textContent = val;
@@ -2223,14 +2235,15 @@ function syncNav(page, val) {
   saveSetting('nav_'+page, val);
 }
 
-/* ===================== ?�정 ?�??로드 ===================== */
+/* ===================== 설정 저장/로드 ===================== */
 async function saveSetting(key, value) {
   await sb.from('settings').upsert({ key, value: String(value) }, { onConflict: 'key' });
   gSettings[key] = String(value);
 }
 
 function applySettings() {
-  // ???�름 & 브랜??  const brandMap = {
+  // 앱 이름 & 브랜딩
+  const brandMap = {
     'branding_appname': ['edit-appname','s-appname'],
     'branding_eyebrow': ['edit-eyebrow','s-appeyebrow'],
     'branding_appsub':  ['edit-appsub',  's-appsub'],
@@ -2242,7 +2255,7 @@ function applySettings() {
     });
   });
 
-  // 메뉴 ?�름
+  // 메뉴 이름
   ['dashboard','records','calendar','charts','goals'].forEach(page => {
     const key = 'nav_' + page;
     if (gSettings[key]) {
@@ -2256,11 +2269,12 @@ function applySettings() {
     }
   });
 
-  // ?�?�포그래??  if (gSettings['font_scale'])    applyFontScale(gSettings['font_scale']);
+  // 타이포그래피
+  if (gSettings['font_scale'])    applyFontScale(gSettings['font_scale']);
   if (gSettings['font_headline']) applyHeadlineFont(gSettings['font_headline']);
   if (gSettings['font_body'])     applyBodyFont(gSettings['font_body']);
 
-  // ?�마
+  // 테마
   if (gSettings['theme']) {
     document.documentElement.setAttribute('data-theme', gSettings['theme']);
     document.getElementById('btn-dark')?.classList.toggle('active',  gSettings['theme']==='dark');
@@ -2318,7 +2332,7 @@ function toggleTheme() {
   saveSetting('theme', newTheme);
 }
 
-// ?�라?�더 ?�벤???�결 (DOMContentLoaded ??
+// 슬라이더 이벤트 연결 (DOMContentLoaded 후)
 window.addEventListener('DOMContentLoaded', () => {
   const slider = document.getElementById('fontScaleSlider');
   if (slider) {
@@ -2333,42 +2347,42 @@ window.addEventListener('DOMContentLoaded', () => {
 function addCafe() {
   const list = document.getElementById('cafeList');
   const item = document.createElement('div'); item.className = 'cafe-item';
-  item.innerHTML = `<div><div class="cafe-name editable" contenteditable="${editMode}">??카페 ?�름</div><div class="cafe-tasks">?�업 ?�형 ?�력</div><div class="cafe-accs">계정 ?�력</div></div><div class="cafe-right"><span class="cafe-badge">?�규</span><button class="edit-del-btn" style="display:flex;background:none;border:none;color:var(--pink);cursor:pointer;font-size:13px;" onclick="this.closest('.cafe-item').remove()">??/button></div>`;
+  item.innerHTML = `<div><div class="cafe-name editable" contenteditable="${editMode}">새 카페 이름</div><div class="cafe-tasks">작업 유형 입력</div><div class="cafe-accs">계정 입력</div></div><div class="cafe-right"><span class="cafe-badge">신규</span><button class="edit-del-btn" style="display:flex;background:none;border:none;color:var(--pink);cursor:pointer;font-size:13px;" onclick="this.closest('.cafe-item').remove()">✕</button></div>`;
   list.appendChild(item);
 }
 function addCafeSetting() {
   const list = document.getElementById('cafeSettingsList');
   const item = document.createElement('div'); item.className = 'cafe-setting-item';
-  // ?�규 ??��?� data-id ?�음 ???�????insert
-  item.innerHTML = `<input value="??카페 ?�름"><button class="cafe-del" onclick="deleteCafeItem(this)">??/button>`;
+  // 신규 항목은 data-id 없음 — 저장 시 insert
+  item.innerHTML = `<input value="새 카페 이름"><button class="cafe-del" onclick="deleteCafeItem(this)">✕</button>`;
   list.appendChild(item);
 }
 
-/* ??버튼: 기존 카페�?DB 비활?�화, ?�규�?그냥 DOM ?�거 */
+/* ✕ 버튼: 기존 카페면 DB 비활성화, 신규면 그냥 DOM 제거 */
 async function deleteCafeItem(btn) {
   const item = btn.parentElement;
   const id = item.dataset.id;
   if (id) {
-    // 기존 카페 ??DB?�서 비활?�화
+    // 기존 카페 → DB에서 비활성화
     await sb.from('cafes').update({ is_active: false }).eq('id', id);
-    // gCafes?�서???�거
+    // gCafes에서도 제거
     gCafes = gCafes.filter(c => c.id !== id);
   }
   item.remove();
 }
 
-/* 카페 ?�정 목록 ?�더 (gCafes 기반) */
+/* 카페 설정 목록 렌더 (gCafes 기반) */
 function renderCafeSettings() {
   const list = document.getElementById('cafeSettingsList');
   if (!list) return;
   list.innerHTML = gCafes.map(c => `
     <div class="cafe-setting-item" data-id="${c.id}">
       <input value="${c.name}">
-      <button class="cafe-del" onclick="deleteCafeItem(this)">??/button>
+      <button class="cafe-del" onclick="deleteCafeItem(this)">✕</button>
     </div>`).join('');
 }
 
-/* 카페 ?�?? ?�름 ?�정 + ?�규 insert�?처리 (??��????버튼?�서 즉시 처리) */
+/* 카페 저장: 이름 수정 + 신규 insert만 처리 (삭제는 ✕ 버튼에서 즉시 처리) */
 async function saveCafeSettings() {
   const items = document.querySelectorAll('#cafeSettingsList .cafe-setting-item');
 
@@ -2378,10 +2392,11 @@ async function saveCafeSettings() {
     const id = item.dataset.id;
 
     if (id) {
-      // 기존 카페 ???�름�??�데?�트
+      // 기존 카페 — 이름만 업데이트
       await sb.from('cafes').update({ name }).eq('id', id);
     } else {
-      // ?�규 카페 ??insert ??data-id 부??      const { data } = await sb.from('cafes').insert({ name, is_active: true }).select().single();
+      // 신규 카페 — insert 후 data-id 부여
+      const { data } = await sb.from('cafes').insert({ name, is_active: true }).select().single();
       if (data) item.dataset.id = data.id;
     }
   }
@@ -2396,7 +2411,7 @@ window.addEventListener('load', () => {
       if(!start) start = ts;
       const p = Math.min((ts-start)/dur, 1);
       const e = 1 - Math.pow(1-p, 3);
-      el.textContent = Math.floor(e*target).toLocaleString('ko-KR')+'??;
+      el.textContent = Math.floor(e*target).toLocaleString('ko-KR')+'원';
       if(p<1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
@@ -2406,32 +2421,34 @@ window.addEventListener('load', () => {
   }, 300);
 });
 
-/* ===================== ?�체 ?�??(?�이지�?분기) ===================== */
+/* ===================== 전체 저장 (페이지별 분기) ===================== */
 async function saveAllSettings() {
   const btn = document.getElementById('saveAllBtn');
   const page = btn?.dataset.page || 'settings';
 
-  const origText = btn?.textContent || '?�� ?�??;
-  if (btn) { btn.textContent = '?�??�?..'; btn.disabled = true; btn.style.opacity = '0.7'; }
+  const origText = btn?.textContent || '💾 저장';
+  if (btn) { btn.textContent = '저장 중...'; btn.disabled = true; btn.style.opacity = '0.7'; }
 
   try {
     if (page === 'settings') {
-      // ?�차 ?�행 ??카페 ?�???�료 ??loadAll
+      // 순차 실행 — 카페 저장 완료 후 loadAll
       await saveBranding();
       await saveNavNames();
       await saveTypography();
       await savePriceSettings();
-      await saveCafeSettings(); // 마�?막에 카페 ?�??      await loadAll();          // 모두 ?�료 ???�면 갱신
+      await saveCafeSettings(); // 마지막에 카페 저장
+      await loadAll();          // 모두 완료 후 화면 갱신
     } else if (page === 'goals') {
       await savePriceSettings();
       await loadAll();
     } else {
-      // ?�?�보??기록/?�력/차트: 브랜?�·메???�름�?      await Promise.all([saveBranding(), saveNavNames()]);
+      // 대시보드/기록/달력/차트: 브랜딩·메뉴 이름만
+      await Promise.all([saveBranding(), saveNavNames()]);
     }
   } catch(e) { console.error(e); }
 
   if (btn) {
-    btn.textContent = '???�?�됨!';
+    btn.textContent = '✓ 저장됨!';
     btn.style.background = '#22c55e';
     btn.style.opacity = '1';
     setTimeout(() => {
@@ -2442,7 +2459,7 @@ async function saveAllSettings() {
   }
 }
 
-/* ===================== ?�정 카드 ?�???�수??===================== */
+/* ===================== 설정 카드 저장 함수들 ===================== */
 
 async function saveBranding() {
   const appname  = document.getElementById('s-appname').value;
@@ -2453,14 +2470,14 @@ async function saveBranding() {
     saveSetting('branding_eyebrow',  eyebrow),
     saveSetting('branding_appsub',   appsub),
   ]);
-  // ?�시�?반영
+  // 실시간 반영
   const n = document.getElementById('edit-appname'); if(n) n.textContent = appname;
   const e = document.getElementById('edit-eyebrow'); if(e) e.textContent = eyebrow;
   const s = document.getElementById('edit-appsub');  if(s) s.textContent = appsub;
 }
 
 async function savePriceSettings() {
-  // ?�정 ?�이지 ?�는 목표 ?�이지 ?�느 쪽이??�??�기
+  // 설정 페이지 또는 목표 페이지 어느 쪽이든 값 읽기
   function readVal(id1, id2, fallback) {
     const v1 = document.getElementById(id1)?.value.replace(/,/g,'');
     const v2 = document.getElementById(id2)?.value.replace(/,/g,'');
@@ -2478,7 +2495,7 @@ async function savePriceSettings() {
     sb.from('goals').upsert({type:'weekly',        amount:weekGoal},     {onConflict:'type'}),
     sb.from('goals').upsert({type:'monthly',       amount:monthGoal},    {onConflict:'type'}),
   ]);
-  // loadAll?� saveAllSettings?�서 ?�번�??�출
+  // loadAll은 saveAllSettings에서 한번만 호출
 }
 
 async function saveNavNames() {
@@ -2490,7 +2507,7 @@ async function saveNavNames() {
     goals:     document.getElementById('nav-goals').value,
   };
   await Promise.all(Object.entries(navMap).map(([page, val]) => saveSetting('nav_'+page, val)));
-  // ?�시�?반영
+  // 실시간 반영
   Object.entries(navMap).forEach(([page, val]) => {
     const n = document.getElementById('edit-nav-'+page); if(n) n.textContent = val;
     const v = document.getElementById('vt-'+page);       if(v) v.textContent = val;
@@ -2509,11 +2526,12 @@ async function saveTypography() {
   ]);
 }
 
-// ?�???�료 ?�드�?function showSaved(fnName) {
+// 저장 완료 피드백
+function showSaved(fnName) {
   const btn = document.querySelector(`button[onclick="${fnName}()"]`);
   if (!btn) return;
   const orig = btn.innerHTML;
-  btn.innerHTML = '???�?�됨';
+  btn.innerHTML = '✓ 저장됨';
   btn.style.background = 'var(--green)';
   setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; }, 1800);
 }
@@ -2526,4 +2544,3 @@ async function saveTypography() {
 </script>
 </body>
 </html>
-
