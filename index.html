@@ -1359,7 +1359,7 @@ function renderDashboard() {
   const nowKST = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
   const todayKSTStr = getKSTDateStr();
   const weekStartDate = new Date(nowKST);
-  weekStartDate.setUTCDate(nowKST.getUTCDate() - nowKST.getUTCDay());
+  weekStartDate.setUTCDate(nowKST.getUTCDate() - (nowKST.getUTCDay() + 6) % 7);
   const weekStartStr = weekStartDate.toISOString().slice(0,10);
   const monthStartStr = todayKSTStr.slice(0,7) + '-01';
 
@@ -1641,7 +1641,7 @@ function renderGoals() {
   const todayStr     = getKSTDateStr();
   const nowKST       = new Date(new Date().getTime() + 9*60*60*1000);
   const weekStartDate2 = new Date(nowKST);
-  weekStartDate2.setUTCDate(nowKST.getUTCDate() - nowKST.getUTCDay());
+  weekStartDate2.setUTCDate(nowKST.getUTCDate() - (nowKST.getUTCDay() + 6) % 7);
   const weekStartStr = weekStartDate2.toISOString().slice(0,10);
   const monthStartStr= todayStr.slice(0,7) + '-01';
 
@@ -1866,14 +1866,28 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function setDate() {
   const now = new Date();
+  const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
   const days = ['일','월','화','수','목','금','토'];
+  const y = kst.getUTCFullYear();
+  const mo = kst.getUTCMonth() + 1;
+  const d = kst.getUTCDate();
+  const dow = kst.getUTCDay();
   document.getElementById('pageDate').textContent =
-    `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 ${days[now.getDay()]}요일`;
-  const today = now.toISOString().split('T')[0];
-  document.getElementById('qDate').value = today;
-  document.getElementById('mDate').value = today;
+    `${y}년 ${mo}월 ${d}일 ${days[dow]}요일`;
+  const today = kst.toISOString().split('T')[0];
+  const qDate = document.getElementById('qDate');
+  const mDate = document.getElementById('mDate');
+  if (qDate && !qDate._userChanged) qDate.value = today;
+  if (mDate && !mDate._userChanged) mDate.value = today;
 }
 setDate();
+setInterval(setDate, 60000);
+document.addEventListener('DOMContentLoaded', () => {
+  ['qDate','mDate'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', () => { el._userChanged = true; });
+  });
+});
 
 /* Get next Sunday midnight */
 function getNextSunday() {
