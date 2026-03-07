@@ -1358,7 +1358,9 @@ function renderDashboard() {
   // KST 기준 주간/월간 시작점
   const nowKST = new Date(new Date().getTime() + 9 * 60 * 60 * 1000);
   const todayKSTStr = getKSTDateStr();
-  const weekStartStr = getKSTDateStr(new Date(new Date().getTime() + 9*60*60*1000 - nowKST.getDay()*86400000));
+  const weekStartDate = new Date(nowKST);
+  weekStartDate.setUTCDate(nowKST.getUTCDate() - nowKST.getUTCDay());
+  const weekStartStr = weekStartDate.toISOString().slice(0,10);
   const monthStartStr = todayKSTStr.slice(0,7) + '-01';
 
   const weekEarn = gPosts.filter(p=>getKSTDateFromWorkedAt(p.worked_at)>=weekStartStr).reduce((s,p)=>s+p.amount,0)
@@ -1638,7 +1640,9 @@ function renderCharts() {
 function renderGoals() {
   const todayStr     = getKSTDateStr();
   const nowKST       = new Date(new Date().getTime() + 9*60*60*1000);
-  const weekStartStr = getKSTDateStr(new Date(new Date().getTime() + 9*60*60*1000 - nowKST.getDay()*86400000));
+  const weekStartDate2 = new Date(nowKST);
+  weekStartDate2.setUTCDate(nowKST.getUTCDate() - nowKST.getUTCDay());
+  const weekStartStr = weekStartDate2.toISOString().slice(0,10);
   const monthStartStr= todayStr.slice(0,7) + '-01';
 
   const todayEarn  = gPosts.filter(p=>getKSTDateFromWorkedAt(p.worked_at)===todayStr).reduce((s,p)=>s+p.amount,0)
@@ -2055,7 +2059,7 @@ function filterRecords() {
   if (accId  !== 'all') all = all.filter(i=>i.account_id===accId);
   if (cafeId !== 'all') all = all.filter(i=>i.cafe_id===cafeId);
   if (type   !== 'all') all = all.filter(i=>i._type===type);
-  if (date)             all = all.filter(i=>i.worked_at.startsWith(date));
+  if (date)             all = all.filter(i=>getKSTDateFromWorkedAt(i.worked_at)===date);
 
   const tbody = document.getElementById('recordsTable');
   const total = all.reduce((s,i)=>s+i.amount,0);
