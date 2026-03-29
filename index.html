@@ -1322,6 +1322,20 @@ async function loadAll() {
 
 /* ===================== 오늘 필터 ===================== */
 /* KST 기준 오늘 날짜 문자열 (YYYY-MM-DD) */
+
+function getCafeColor(name) {
+  if (!name) return '#6b7280';
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const colors = [
+    '#f97316','#eab308','#22c55e','#14b8a6',
+    '#3b82f6','#8b5cf6','#ec4899','#06b6d4',
+    '#a855f7','#10b981','#f59e0b','#ef4444',
+  ];
+  return colors[Math.abs(hash) % colors.length];
+}
 function getKSTDateStr(date = new Date()) {
   const kst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
   return kst.toISOString().split('T')[0];
@@ -1498,7 +1512,7 @@ function renderWorkTable(tp, tc, filterType='all') {
       html += `<tr class="dash-row-${accId}" data-type="${item._type}" style="display:${isOpen?'':'none'};border-bottom:1px solid rgba(40,40,60,0.5)">
         <td class="time-cell" style="padding:11px 14px">${time}</td>
         <td style="padding:11px 14px"><span class="atag" style="background:${color}20;color:${color}">${acc.username||'-'}</span></td>
-        <td style="padding:11px 14px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text2);background:var(--surface3);padding:2px 8px;border-radius:4px;">☕ ${cafe.name||'-'}</span></td>
+        <td style="padding:11px 14px"><span style="font-family:var(--font-mono);font-size:9px;color:${getCafeColor(cafe.name)};background:${getCafeColor(cafe.name)}18;padding:2px 8px;border-radius:4px;">☕ ${cafe.name||'-'}</span></td>
         <td style="padding:11px 14px">${typeCell}</td>
         <td style="padding:11px 14px">${urlCell}</td>
         <td style="padding:11px 14px;font-family:var(--font-mono);font-size:11px;color:${isComment?'var(--yellow)':'var(--green)'};font-weight:700">+${item.amount.toLocaleString()}</td>
@@ -1576,7 +1590,7 @@ function renderRecords() {
       <td class="time-cell" style="padding:11px 14px">${dateStr}</td>
       <td class="time-cell" style="padding:11px 14px">${timeStr}</td>
       <td style="padding:11px 14px"><span class="atag" style="background:${color}20;color:${color}">${acc.username||'-'}</span></td>
-      <td style="padding:11px 14px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text2);background:var(--surface3);padding:2px 8px;border-radius:4px;white-space:nowrap">☕ ${cafe.name||'-'}</span></td>
+      <td style="padding:11px 14px"><span style="font-family:var(--font-mono);font-size:9px;color:${getCafeColor(cafe.name)};background:${getCafeColor(cafe.name)}18;padding:2px 8px;border-radius:4px;white-space:nowrap">☕ ${cafe.name||'-'}</span></td>
       <td style="padding:11px 14px"><span class="tbadge" style="${isComment?'background:rgba(251,191,36,0.1);color:var(--yellow)':''}">${isComment?'💬 댓글':'📄 '+(item.category||'게시물')}</span></td>
       <td style="padding:11px 14px">${urlCell}</td>
       <td style="padding:11px 14px;font-family:var(--font-mono);font-size:11px;color:${isComment?'var(--yellow)':'var(--green)'};font-weight:700;white-space:nowrap">+${item.amount.toLocaleString()}원</td>
@@ -2099,7 +2113,7 @@ function filterRecords() {
       <td style="padding:11px 14px;font-family:var(--font-mono);font-size:10px;color:var(--text3)">${dateStr}</td>
       <td class="time-cell" style="padding:11px 14px">${timeStr}</td>
       <td style="padding:11px 14px"><span class="atag" style="background:${color}20;color:${color}">${acc.username||'-'}</span></td>
-      <td style="padding:11px 14px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text2);background:var(--surface3);padding:2px 8px;border-radius:4px;white-space:nowrap">☕ ${cafe.name||'-'}</span></td>
+      <td style="padding:11px 14px"><span style="font-family:var(--font-mono);font-size:9px;color:${getCafeColor(cafe.name)};background:${getCafeColor(cafe.name)}18;padding:2px 8px;border-radius:4px;white-space:nowrap">☕ ${cafe.name||'-'}</span></td>
       <td style="padding:11px 14px"><span class="tbadge" style="${isComment?'background:rgba(251,191,36,0.1);color:var(--yellow)':''}">${isComment?'💬 댓글':'📄 '+(item.category||'게시물')}</span></td>
       <td style="padding:11px 14px">${urlCell}</td>
       <td style="padding:11px 14px;font-family:var(--font-mono);font-size:11px;color:${isComment?'var(--yellow)':'var(--green)'};font-weight:700;white-space:nowrap">+${item.amount.toLocaleString()}원</td>
