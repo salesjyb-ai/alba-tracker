@@ -1503,7 +1503,7 @@ function renderWorkTable(tp, tc, filterType='all') {
       const cafe = item.cafe || {};
       const isComment = item._type === 'comment';
       const urlCell = !isComment && item.url
-        ? `<a href="${item.url}" target="_blank" style="font-family:var(--font-mono);font-size:9px;color:var(--accent);text-decoration:none;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;">링크 ↗</a>`
+        ? `<a href="${item.url}" target="_blank" style="font-family:var(--font-mono);font-size:11px;color:var(--accent);text-decoration:none;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;">링크 ↗</a>`
         : (isComment ? `<span style="color:var(--text2);font-size:10px;">${item.count}개</span>` : '<span style="color:var(--text3)">—</span>');
       const typeCell = isComment
         ? `<span class="tbadge" style="background:rgba(251,191,36,0.1);color:var(--yellow)">💬 댓글</span>`
@@ -1512,7 +1512,7 @@ function renderWorkTable(tp, tc, filterType='all') {
       html += `<tr class="dash-row-${accId}" data-type="${item._type}" style="display:${isOpen?'':'none'};border-bottom:1px solid rgba(40,40,60,0.5)">
         <td class="time-cell" style="padding:11px 14px">${time}</td>
         <td style="padding:11px 14px"><span class="atag" style="background:${color}20;color:${color}">${acc.username||'-'}</span></td>
-        <td style="padding:11px 14px"><span style="font-family:var(--font-mono);font-size:9px;color:${getCafeColor(cafe.name)};background:${getCafeColor(cafe.name)}18;padding:2px 8px;border-radius:4px;">☕ ${cafe.name||'-'}</span></td>
+        <td style="padding:11px 14px"><span style="font-family:var(--font-mono);font-size:11px;color:${getCafeColor(cafe.name)};background:${getCafeColor(cafe.name)}18;padding:2px 8px;border-radius:4px;">☕ ${cafe.name||'-'}</span></td>
         <td style="padding:11px 14px">${typeCell}</td>
         <td style="padding:11px 14px">${urlCell}</td>
         <td style="padding:11px 14px;font-family:var(--font-mono);font-size:11px;color:${isComment?'var(--yellow)':'var(--green)'};font-weight:700">+${item.amount.toLocaleString()}</td>
