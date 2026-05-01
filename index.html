@@ -1282,6 +1282,17 @@ const pages   = ['dashboard','records','calendar','charts','goals','settings'];
 const pageTitleMap = { dashboard:'대시보드', records:'작업 기록', calendar:'달력 뷰', charts:'통계 차트', goals:'목표 & 달성률', settings:'편집 설정' };
 
 /* ===================== DB 로드 ===================== */
+async function wakeUpSupabase() {
+  try {
+    await sb.from('accounts').select('id').limit(1);
+    console.log('[Supabase] 연결 확인 완료');
+  } catch(e) {
+    console.warn('[Supabase] 연결 실패, 재시도 중...');
+    await new Promise(r => setTimeout(r, 3000));
+    await sb.from('accounts').select('id').limit(1);
+  }
+}
+
 async function loadAll() {
   const todayStart = new Date();
   todayStart.setHours(0,0,0,0);
@@ -1867,7 +1878,8 @@ function formatNumberInput(el) {
 }
 
 // 페이지 로드 후 .fmt-number 클래스 입력 필드에 이벤트 연결
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
+  await wakeUpSupabase();
   loadAll();
   document.querySelectorAll('.fmt-number').forEach(el => {
     el.addEventListener('input', () => formatNumberInput(el));
