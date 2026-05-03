@@ -1559,7 +1559,13 @@ function renderWorkTable(tp, tc, filterType='all') {
       </td>
     </tr>`;
 
-    // 그룹 내 아이템 행
+    // 그룹 내 아이템 행 - 카페별로 정렬
+    g.items.sort((a, b) => {
+      const cafaA = (a.cafe?.name || '');
+      const cafeB = (b.cafe?.name || '');
+      if (cafaA !== cafeB) return cafaA.localeCompare(cafeB, 'ko');
+      return new Date(b.worked_at) - new Date(a.worked_at);
+    });
     g.items.forEach(item => {
       const dt = new Date(item.worked_at);
       const time = dt.toLocaleTimeString('ko-KR', {hour:'2-digit',minute:'2-digit'});
