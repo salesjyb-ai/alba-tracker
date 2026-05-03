@@ -797,6 +797,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 </style>
 </head>
 <body>
+<canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;display:none;"></canvas>
 
 <!-- EDIT BANNER -->
 <div class="edit-banner">
@@ -1334,6 +1335,57 @@ async function loadAll() {
 /* ===================== 오늘 필터 ===================== */
 /* KST 기준 오늘 날짜 문자열 (YYYY-MM-DD) */
 
+
+/* ===================== 폭죽 효과 ===================== */
+const _goalAchieved = { daily: false, weekly: false, monthly: false };
+
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  if (!canvas) return;
+  canvas.style.display = 'block';
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = Array.from({length: 150}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height - canvas.height,
+    r: Math.random() * 6 + 3,
+    d: Math.random() * 150 + 10,
+    color: ['#f97316','#eab308','#22c55e','#3b82f6','#8b5cf6','#ec4899','#06b6d4'][Math.floor(Math.random()*7)],
+    tilt: Math.random() * 10 - 10,
+    tiltAngle: 0,
+    tiltAngleInc: Math.random() * 0.07 + 0.05,
+  }));
+
+  let angle = 0;
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    angle += 0.01;
+    frame++;
+    particles.forEach(p => {
+      p.tiltAngle += p.tiltAngleInc;
+      p.y += (Math.cos(angle + p.d) + 2 + p.r / 2) * 1.5;
+      p.x += Math.sin(angle) * 1.5;
+      p.tilt = Math.sin(p.tiltAngle) * 15;
+      ctx.beginPath();
+      ctx.lineWidth = p.r;
+      ctx.strokeStyle = p.color;
+      ctx.moveTo(p.x + p.tilt + p.r / 4, p.y);
+      ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 4);
+      ctx.stroke();
+      if (p.y > canvas.height) {
+        p.y = -10;
+        p.x = Math.random() * canvas.width;
+      }
+    });
+    if (frame < 180) requestAnimationFrame(draw);
+    else { ctx.clearRect(0,0,canvas.width,canvas.height); canvas.style.display='none'; }
+  }
+  draw();
+}
+
 function getCafeColor(name) {
   if (!name) return '#6b7280';
   let hash = 0;
@@ -1706,7 +1758,8 @@ function renderGoals() {
     {id:'goal-week', earn:weekEarn,   goal:weeklyGoal,  label:'주 목표'},
     {id:'goal-month',earn:monthEarn,  goal:monthlyGoal, label:'월 목표'},
   ];
-  sets.forEach(({id, earn, goal}) => {
+  const goalKeys = ['daily','weekly','monthly'];
+  sets.forEach(({id, earn, goal}, i) => {
     const pct = Math.min(Math.round(earn/goal*100),100);
     const earnEl = document.getElementById(id+'-earn');
     const pctEl  = document.getElementById(id+'-pct');
@@ -1714,6 +1767,15 @@ function renderGoals() {
     if (earnEl) earnEl.textContent = earn.toLocaleString()+'원';
     if (pctEl)  pctEl.textContent  = pct+'%';
     if (barEl)  barEl.style.width  = pct+'%';
+
+    // 100% 달성 시 폭죽 (이미 발사한 경우 중복 방지)
+    const key = goalKeys[i];
+    if (pct >= 100 && !_goalAchieved[key]) {
+      _goalAchieved[key] = true;
+      launchConfetti();
+    } else if (pct < 100) {
+      _goalAchieved[key] = false; // 초기화 (날짜 바뀌면 다시 발사 가능)
+    }
   });
 }
 
